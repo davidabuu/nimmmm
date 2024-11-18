@@ -1,19 +1,20 @@
-import type { Config } from "tailwindcss";
-
-const config: Config = {
-  content: [
-    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./app/**/*.{js,ts,jsx,tsx,mdx}",
-  ],
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: ["./app/**/*.{js,ts,jsx,tsx,mdx}", "./src/**/*.{js,ts,jsx,tsx}"],
+  darkMode: "class",
   theme: {
     extend: {
+      backgroundImage: {
+        "custom-pattern": "url('/lino.jpg')", // Add your own image path here
+      },
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        primary: "#010056",
+        secondary: "#1B1C1E",
+      },
+      clipPath: {
+        circle: "circle(50%)",
       },
     },
   },
   plugins: [],
 };
-export default config;

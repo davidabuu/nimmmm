@@ -2,26 +2,78 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@keyframes spin {
+  to {
+      transform: rotate(360deg);
   }
 }
-
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+}
+.ellipsis {
+  white-space: nowrap; /* Prevents the text from wrapping */
+  overflow: hidden; /* Hides any content that overflows its container */
+  text-overflow: ellipsis; /* Displays an ellipsis (...) to represent clipped text */
+  max-width: 100%; /* Limits the width of the container */
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+}
+
+
+/* Default styles for smaller screens */
+.sideNav {
+  z-index: 10;
+}
+
+.menu {
+  display: none !important;
+}
+
+/* Media query for screens with a width of 800px and above */
+@media (min-width: 900px) {
+  .sideNav {
+    visibility: visible;
+  }
+
+  
+
+  .menu {
+    display: none; /* Optional: You may or may not want to hide another menu here */
+  }
+
+  /* Optional: If you want to show a different menu or style at 800px and above */
+ 
+}
+
+@media (max-width: 770px) {
+  .menu {
+    display: flex !important; /* Optional: You may or may not want to hide another menu here */
+  }
+  .-translate-x-fulll {
+    --tw-translate-x: -100%;
+    transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+  /* Optional: If you want to show a different menu or style at 800px and above */
+  .showNav {
+    visibility: visible;
+    position: fixed;
+    z-index: 10;
+  }
+  .navFix{
+    position: fixed;
   }
 }
