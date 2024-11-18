@@ -1,4 +1,4 @@
-import AdminDashboard from "@/src/components/Dashboard/AdminDashboard";
+
 import Publication from "@/src/components/Publication/Publication";
 
 import { Metadata } from "next/types";
