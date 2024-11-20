@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { FiClock, FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { FaBell } from "react-icons/fa";
+import Link from "next/link";
 
 interface NewsCardProps {
   title: string;
@@ -50,12 +51,14 @@ function NewsCard({
           <span>{time}</span>
         </div>
 
-        <button
-          onClick={onReadMore}
-          className="block w-full py-2 text-center text-white bg-primary hover:bg-[#0A0057]/90 transition-colors"
-        >
-          Read More
-        </button>
+        <Link href="/single-news">
+          <button
+            onClick={onReadMore}
+            className="block w-full py-2 text-center text-white bg-primary hover:bg-[#0A0057]/90 transition-colors"
+          >
+            Read More
+          </button>
+        </Link>
       </div>
     </div>
   );

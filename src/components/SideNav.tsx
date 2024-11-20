@@ -10,7 +10,7 @@ import Image from "next/image";
 import { RxCountdownTimer } from "react-icons/rx";
 import { FaFileAlt, FaRegUserCircle } from "react-icons/fa";
 import { SlBadge } from "react-icons/sl";
-import { FiBarChart, FiSpeaker } from "react-icons/fi";
+import { FiBarChart, FiCalendar, FiSpeaker } from "react-icons/fi";
 
 const SideNav: React.FC = () => {
   const [showSideNav, setShowSideNav] = useState(false); // Control SideNav visibility
@@ -128,7 +128,19 @@ const SideNav: React.FC = () => {
             >
               <FiSpeaker className="w-6 h-6" />
               <Link href="/news">
-                <p className="ml-4">News</p>
+                <p className="ml-4">NIM News</p>
+              </Link>
+            </li>
+            <li
+              className={`flex p-3 my-2 cursor-pointer items-center ${
+                isActive("/nim-events")
+                  ? "text-white bg-primary border-r-4 border-primary"
+                  : ""
+              }`}
+            >
+              <FiCalendar className="w-6 h-6" />
+              <Link href="/nim-events">
+                <p className="ml-4">NIM Events</p>
               </Link>
             </li>
             {/* Publication */}
