@@ -1,12 +1,22 @@
-import React, { useState } from 'react';
-import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import React, { useState } from "react";
+import { FaEye, FaEyeSlash, FaSpinner } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux"; // Import the Redux thunk
+import { notification } from "antd";
+import { AppDispatch, RootState } from "@/src/lib/store";
+import { changePassword } from "@/src/redux/auth/changePassword";
 
 const ChangePassword = () => {
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
   const [currentPasswordVisible, setCurrentPasswordVisible] = useState(false);
   const [newPasswordVisible, setNewPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
 
-  // Toggle password visibility
+  const dispatch = useDispatch<AppDispatch>();
+  const { isLoading } = useSelector((state: RootState) => state.changePassword);
+
   const toggleCurrentPasswordVisibility = () => {
     setCurrentPasswordVisible(!currentPasswordVisible);
   };
@@ -19,26 +29,55 @@ const ChangePassword = () => {
     setConfirmPasswordVisible(!confirmPasswordVisible);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Add the logic for changing the password here
+  const handleSubmit = async () => {
+    if (newPassword !== confirmPassword) {
+      notification.error({
+        message: "Password Mismatch",
+        description: "New password and confirm password must match.",
+      });
+      return;
+    }
+
+    try {
+      await dispatch(changePassword({ currentPassword, newPassword })).unwrap();
+
+      notification.success({
+        message: "Success",
+        description: "Password changed successfully!",
+      });
+
+      // Clear the form
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch {
+      notification.error({
+        message: "Error",
+       
+      });
+    }
   };
 
   return (
-    <div className=" py-8">
-      <div className="max-w-lg  bg-white shadow-lg rounded-lg p-8">
+    <div className="py-8">
+      <div className="max-w-lg bg-white shadow-lg rounded-lg p-8">
         <h2 className="text-2xl font-semibold mb-6">Change Password</h2>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="space-y-6">
           {/* Current Password */}
           <div>
-            <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="currentPassword"
+              className="block text-sm font-medium text-gray-700"
+            >
               Current Password
             </label>
             <div className="relative mt-2">
               <input
-                type={currentPasswordVisible ? 'text' : 'password'}
+                type={currentPasswordVisible ? "text" : "password"}
                 id="currentPassword"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
                 placeholder="Password"
                 className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -53,13 +92,18 @@ const ChangePassword = () => {
 
           {/* New Password */}
           <div>
-            <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="newPassword"
+              className="block text-sm font-medium text-gray-700"
+            >
               New Password
             </label>
             <div className="relative mt-2">
               <input
-                type={newPasswordVisible ? 'text' : 'password'}
+                type={newPasswordVisible ? "text" : "password"}
                 id="newPassword"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
                 placeholder="Password"
                 className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -74,13 +118,18 @@ const ChangePassword = () => {
 
           {/* Confirm New Password */}
           <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="confirmPassword"
+              className="block text-sm font-medium text-gray-700"
+            >
               Confirm Password
             </label>
             <div className="relative mt-2">
               <input
-                type={confirmPasswordVisible ? 'text' : 'password'}
+                type={confirmPasswordVisible ? "text" : "password"}
                 id="confirmPassword"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Confirm new password"
                 className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -96,13 +145,19 @@ const ChangePassword = () => {
           {/* Submit Button */}
           <div>
             <button
-              type="submit"
-              className="w-full bg-primary text-white px-4 py-2  hover:bg-blue-800 transition"
+              onClick={handleSubmit}
+              className="w-full bg-primary text-white px-4 py-2 hover:bg-blue-800 transition flex justify-center items-center"
+              disabled={isLoading}
             >
-              Change Password
+              {isLoading ? (
+                <FaSpinner className="animate-spin mr-2" />
+              ) : (
+                "Change Password"
+              )}
+              {isLoading && "Loading..."}
             </button>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import React from "react";
-import OutstandingPayments from "./OutstandingPayment";
+//import OutstandingPayments from "./OutstandingPayment";
 import { FaBell } from "react-icons/fa";
 import PublicationUI from "./PublicationUI";
 
@@ -10,10 +10,10 @@ const PublicationPage = () => {
         <FaBell size={20} />
       </div>
    
-      <OutstandingPayments
+      {/* <OutstandingPayments
         message="Kindly Pay Up all Outstandings to you access publications and materials"
         buttonText="Outstanding Payments"
-      />
+      /> */}
       <PublicationUI />
     </div>
   );

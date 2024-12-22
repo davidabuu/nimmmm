@@ -1,35 +1,42 @@
-import React, { useState } from "react";
+// imports
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
+import "react-loading-skeleton/dist/skeleton.css";
+
+import { getHistoryPayments } from "@/src/redux/payment/historyPayment";
+import { fetchAccountInfo } from "@/src/redux/auth/fetchAccountInfo";
+import TableSkeleton from "../Dashboard/TableSkeleton";
+import { AppDispatch, RootState } from "@/src/lib/store";
+
+
 
 const PaymentHistory = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("latest");
 
-  const paymentData = [
-    {
-      date: "16/09/2024",
-      description: "Annual Membership Subscription",
-      amount: "₦20,000.00",
-    },
-    {
-      date: "16/09/2024",
-      description: "Annual Membership Subscription",
-      amount: "₦20,000.00",
-    },
-    {
-      date: "16/09/2024",
-      description: "Annual Membership Subscription",
-      amount: "₦20,000.00",
-    },
-  ];
-
-  // Filter payments based on search term
-  const filteredData = paymentData.filter((item) =>
-    item.description.toLowerCase().includes(searchTerm.toLowerCase())
+  const dispatch = useDispatch<AppDispatch>();
+  const { loading: accountLoading } = useSelector(
+    (state: RootState) => state.fetchAccountInfo
   );
 
-  // Sorting function (this is a placeholder; implement logic based on your requirements)
-  const sortedData =
-    sortBy === "latest" ? filteredData : [...filteredData].reverse(); // Example: reverse for 'oldest' sorting
+  // Access payment history and loading state from Redux
+  const { data: paymentData, loading } = useSelector(
+    (state: RootState) => state.getHistoryPayments
+  );
+
+  useEffect(() => {
+    dispatch(fetchAccountInfo()).then((action) => {
+      if (fetchAccountInfo.fulfilled.match(action)) {
+        const membershipId = action.payload.data?.membershipId;
+        if (membershipId) {
+          dispatch(getHistoryPayments(membershipId));
+        }
+      }
+    });
+  }, [dispatch]);
+
+  
 
   return (
     <div>
@@ -67,35 +74,36 @@ const PaymentHistory = () => {
 
       {/* Payments Table */}
       <div className="overflow-x-auto">
-        <table className="min-w-full bg-white table-auto border-collapse">
-          <thead>
-            <tr className="bg-secondary text-white">
-              <th className="p-4 whitespace-nowrap text-left">Date Paid</th>
-              <th className="p-4 whitespace-nowrap text-left">Description</th>
-              <th className="p-4 whitespace-nowrap text-left">Amount</th>
-              <th className="p-4 whitespace-nowrap"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {sortedData.map((item, index) => (
-              <tr
-                key={index}
-                className="border-b"
-              >
-                <td className="p-4 whitespace-nowrap">{item.date}</td>
-                <td className="p-4 whitespace-nowrap">{item.description}</td>
-                <td className="p-4 whitespace-nowrap text-green-500">
-                  {item.amount}
-                </td>
-                <td className="p-4 whitespace-nowrap">
-                  <button className="bg-primary text-white px-4 py-2 hover:bg-blue-800 transition">
-                    View Details
-                  </button>
-                </td>
+        {loading || accountLoading ? (
+          <TableSkeleton rows={4} cols={5} />
+        ) : (
+          <table className="min-w-full bg-white table-auto border-collapse">
+            <thead>
+              <tr className="bg-secondary text-white">
+                <th className="p-4 whitespace-nowrap text-left">Date Paid</th>
+                <th className="p-4 whitespace-nowrap text-left">Description</th>
+                <th className="p-4 whitespace-nowrap text-left">Amount</th>
+                <th className="p-4 whitespace-nowrap"></th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {paymentData?.payments?.map((item, index) => (
+                <tr key={index} className="border-b">
+                  <td className="p-4 whitespace-nowrap">{item.date}</td>
+                  <td className="p-4 whitespace-nowrap">{item.description}</td>
+                  <td className="p-4 whitespace-nowrap text-green-500">
+                    {item.amount}
+                  </td>
+                  <td className="p-4 whitespace-nowrap">
+                    <button className="bg-primary text-white px-4 py-2 hover:bg-blue-800 transition">
+                      View Details
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
 
       {/* Pagination */}

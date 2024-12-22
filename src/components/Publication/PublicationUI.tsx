@@ -1,92 +1,28 @@
-"use client";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/src/lib/store";
 
-import Image from "next/image";
-import { useState } from "react";
-import {
-  FiSearch,
-  FiArrowRight,
-  FiChevronLeft,
-  FiChevronRight,
-} from "react-icons/fi";
-
-interface PublicationCardProps {
-  issn: string;
-  title: string;
-  description: string;
-  imageUrl: string;
-}
-
-function PublicationCard({
-  issn,
-  title,
-  description,
-  imageUrl,
-}: PublicationCardProps) {
-  return (
-    <div className="bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
-      <div className="flex flex-col sm:flex-row gap-6 items-start">
-        <div className="w-24 h-24 shrink-0">
-          <Image
-            src={imageUrl}
-            alt={`${title} logo`}
-            className="w-full h-full"
-            width={50}
-            height={50}
-          />
-        </div>
-        <div className="flex-1 min-w-0">
-          <div className="space-y-2">
-            <p className="text-sm text-gray-600">{issn}</p>
-            <h3 className="text-xl font-semibold text-gray-900 line-clamp-1">
-              {title}
-            </h3>
-            <p className="text-gray-600 line-clamp-2">{description}</p>
-          </div>
-        </div>
-        <div className="sm:self-center mt-4 sm:mt-0">
-          <button className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white  hover:bg-[#0A0057]/90 transition-colors">
-            Go to publication
-            <FiArrowRight className="w-4 h-4" />
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+import { FiSearch, FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { getPublication } from "@/src/redux/publications/getPublication";
+import PublicationCard from "./PublicationCard";
 
 export default function PublicationUI() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = 7;
+  const dispatch = useDispatch<AppDispatch>();
 
-  const publications = [
-    {
-      issn: "ISSN-2222-2222",
-      title: "Journal Of Management",
-      description:
-        "This journal welcomes original research articles, reviews, and perspectives in all areas of management.",
-      imageUrl: "/nnpc.png",
-    },
-    {
-      issn: "ISSN-2222-2222",
-      title: "Journal Of Management",
-      description:
-        "This journal welcomes original research articles, reviews, and perspectives in all areas of management.",
-      imageUrl: "/nnpc.png",
-    },
-    {
-      issn: "ISSN-2222-2222",
-      title: "Journal Of Management",
-      description:
-        "This journal welcomes original research articles, reviews, and perspectives in all areas of management.",
-      imageUrl: "/nnpc.png",
-    },
-  ];
+  const {
+    data: publications,
+    loading,
+    error,
+  } = useSelector((state: RootState) => state.getPublication);
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
-    setCurrentPage(1);
-  };
+  const [searchQuery, setSearchQuery] = React.useState("");
+  const [currentPage, setCurrentPage] = React.useState(1);
+
+  useEffect(() => {
+    dispatch(getPublication(""));
+  }, [dispatch]);
 
   return (
     <div className="max-w-6xl mx-auto p-6">
@@ -108,7 +44,7 @@ export default function PublicationUI() {
             type="text"
             id="search"
             value={searchQuery}
-            onChange={handleSearch}
+            onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search"
             className="w-full md:w-[300px] pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
@@ -116,13 +52,25 @@ export default function PublicationUI() {
       </div>
 
       {/* Publications List */}
+      {/* Publications List */}
       <div className="space-y-4">
-        {publications.map((pub, index) => (
-          <PublicationCard
-            key={index}
-            {...pub}
+        {loading ? (
+          <Skeleton
+            count={10}
+            height={100}
           />
-        ))}
+        ) : error ? (
+          <p className="text-red-500">{error}</p>
+        ) : Array.isArray(publications) && publications.length > 0 ? (
+          publications.map((pub, index) => (
+            <PublicationCard
+              key={index}
+              {...pub}
+            />
+          ))
+        ) : (
+          <p className="text-gray-500">No publications found.</p>
+        )}
       </div>
 
       {/* Pagination */}
@@ -130,31 +78,12 @@ export default function PublicationUI() {
         <button
           onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
           disabled={currentPage === 1}
-          className="p-2  hover:bg-gray-100 disabled:opacity-50"
+          className="p-2 hover:bg-gray-100 disabled:opacity-50"
         >
           <FiChevronLeft className="w-5 h-5" />
         </button>
 
-        {[...Array(totalPages)].map((_, i) => (
-          <button
-            key={i}
-            onClick={() => setCurrentPage(i + 1)}
-            className={`w-8 h-8  flex items-center justify-center text-sm
-              ${
-                currentPage === i + 1
-                  ? "bg-gray-900 text-white"
-                  : "hover:bg-gray-100 text-gray-700"
-              }`}
-          >
-            {i + 1}
-          </button>
-        ))}
-
-        <button
-          onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-          disabled={currentPage === totalPages}
-          className="p-2 hover:bg-gray-100 disabled:opacity-50"
-        >
+        <button className="p-2 hover:bg-gray-100 disabled:opacity-50">
           <FiChevronRight className="w-5 h-5" />
         </button>
       </div>

@@ -1,14 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/src/lib/store"; // Adjust to your store path
+// Replace with your news action
 import { FiClock, FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { FaBell } from "react-icons/fa";
 import Link from "next/link";
-
+import { getNews } from "@/src/redux/news/getPublication";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 interface NewsCardProps {
   title: string;
-  excerpt: string;
+  content: string;
+  author: string;
   date: string;
   time: string;
   imageUrl: string;
@@ -17,44 +23,47 @@ interface NewsCardProps {
 
 function NewsCard({
   title,
-  excerpt,
+  author,
   date,
+  content,
   time,
-  imageUrl,
   onReadMore,
 }: NewsCardProps) {
   return (
-    <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+    <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
       {/* Image Container */}
-      <div className="relative h-20 w-full">
+      <div className="relative h-48 w-full">
         <Image
-          src={imageUrl}
+          src="/ddd.png" // Default placeholder image
           alt={title}
-          width={100}
-          height={100}
+          layout="fill"
+          objectFit="cover"
+          className="object-cover"
         />
       </div>
 
       {/* Content */}
-      <div className="p-4 space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900 line-clamp-2">
-          {title}
-        </h3>
+      <div className="p-4">
+        {/* Title */}
+        <h3 className="text-white font-semibold text-base mb-2">{title}</h3>
 
-        <p className="text-gray-600 text-sm line-clamp-3">{excerpt}</p>
+        {/* Author */}
+        <p className="text-primary text-sm mb-4">By: {author}</p>
+        <p className="text-primary text-sm mb-4">{content}</p>
 
         {/* Metadata */}
-        <div className="flex items-center gap-2 text-sm text-gray-500">
+        <div className="flex items-center gap-2 text-sm text-gray-400 mb-4">
           <FiClock className="w-4 h-4" />
           <span>{date}</span>
           <span>•</span>
           <span>{time}</span>
         </div>
 
-        <Link href="/single-news">
+        {/* Read More Button */}
+        <Link href="">
           <button
             onClick={onReadMore}
-            className="block w-full py-2 text-center text-white bg-primary hover:bg-[#0A0057]/90 transition-colors"
+            className="w-full py-2 text-center text-white bg-primary hover:bg-blue-800 transition-colors rounded"
           >
             Read More
           </button>
@@ -63,66 +72,26 @@ function NewsCard({
     </div>
   );
 }
-
 export default function News() {
   const [currentPage, setCurrentPage] = useState(1);
-  const newsItems = [
-    {
-      title:
-        "The Nigerian Institute Of Management (Chartered) Has Released Its Newsletter For Public Consumption",
-      excerpt:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-      date: "October 21, 2024",
-      time: "2:34 pm",
-      imageUrl: "/nnpc.png",
-    },
-    {
-      title:
-        "The Nigerian Institute Of Management (Chartered) Has Released Its Newsletter For Public Consumption",
-      excerpt:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-      date: "October 21, 2024",
-      time: "2:34 pm",
-      imageUrl: "/nnpc.png",
-    },
-    {
-      title:
-        "The Nigerian Institute Of Management (Chartered) Has Released Its Newsletter For Public Consumption",
-      excerpt:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-      date: "October 21, 2024",
-      time: "2:34 pm",
-      imageUrl: "/nnpc.png",
-    },
-    {
-      title:
-        "The Nigerian Institute Of Management (Chartered) Has Released Its Newsletter For Public Consumption",
-      excerpt:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-      date: "October 21, 2024",
-      time: "2:34 pm",
-      imageUrl: "/nnpc.png",
-    },
-    {
-      title:
-        "The Nigerian Institute Of Management (Chartered) Has Released Its Newsletter For Public Consumption",
-      excerpt:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-      date: "October 21, 2024",
-      time: "2:34 pm",
-      imageUrl: "/nnpc.png",
-    },
-    {
-      title:
-        "The Nigerian Institute Of Management (Chartered) Has Released Its Newsletter For Public Consumption",
-      excerpt:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-      date: "October 21, 2024",
-      time: "2:34 pm",
-      imageUrl: "/nnpc.png",
-    },
-    // Repeat similar items for grid...
-  ];
+  const dispatch = useDispatch<AppDispatch>();
+  const {
+    data: newsItems,
+    loading,
+    error,
+  } = useSelector((state: RootState) => state.getNews);
+
+  useEffect(() => {
+    dispatch(getNews(""));
+  }, [dispatch]);
+
+  const itemsPerPage = 6; // Number of news items per page
+  const displayedItems = Array.isArray(newsItems)
+    ? newsItems.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+      )
+    : [];
 
   return (
     <div className="mx-10">
@@ -137,15 +106,33 @@ export default function News() {
 
       <div className="max-w-7xl mx-auto p-6">
         {/* News Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {newsItems.map((item, index) => (
-            <NewsCard
-              key={index}
-              {...item}
-              onReadMore={() => console.log(`Reading more about ${item.title}`)}
-            />
-          ))}
-        </div>
+        {loading ? (
+          <Skeleton
+            count={10}
+            height={100}
+          />
+        ) : error ? (
+          <p className="text-red-500">Error loading news: {error}</p>
+        ) : Array.isArray(newsItems) && newsItems.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            {displayedItems.map((item, index) => (
+              <NewsCard
+                key={index}
+                title={item.title}
+                content={item.content}
+                author={item.author}
+                date={new Date().toLocaleDateString()}
+                time={new Date().toLocaleTimeString()}
+                imageUrl={item.imageUrl || "/placeholder.png"}
+                onReadMore={() =>
+                  console.log(`Reading more about ${item.title}`)
+                }
+              />
+            ))}
+          </div>
+        ) : (
+          <p className="text-gray-500">No news available.</p>
+        )}
 
         {/* Pagination */}
         <div className="flex justify-center items-center gap-2">
@@ -157,24 +144,12 @@ export default function News() {
             <FiChevronLeft className="w-5 h-5" />
           </button>
 
-          {[1, 2, 3].map((page) => (
-            <button
-              key={page}
-              onClick={() => setCurrentPage(page)}
-              className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm
-              ${
-                currentPage === page
-                  ? "bg-gray-900 text-white"
-                  : "hover:bg-gray-100 text-gray-700"
-              }`}
-            >
-              {page}
-            </button>
-          ))}
+        
+        
+        
 
           <button
-            onClick={() => setCurrentPage(Math.min(3, currentPage + 1))}
-            disabled={currentPage === 3}
+           
             className="p-2 rounded-lg hover:bg-gray-100 disabled:opacity-50"
           >
             <FiChevronRight className="w-5 h-5" />
