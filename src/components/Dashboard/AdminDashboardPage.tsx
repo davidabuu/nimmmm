@@ -9,7 +9,7 @@ import { fetchAccountInfo } from "@/src/redux/auth/fetchAccountInfo";
 import Box from "../Box";
 import { getOutstandingPayments } from "@/src/redux/payment/outstandingPayment";
 import TableSkeleton from "./TableSkeleton";
- // Import TableSkeleton
+// Import TableSkeleton
 
 const AdminDashboardPage = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -55,13 +55,27 @@ const AdminDashboardPage = () => {
         <div className="text-secondary ml-2">
           {accountLoading ? (
             <>
-              <Skeleton width={120} height={20} />
-              <Skeleton width={80} height={15} className="mt-1" />
+              <Skeleton
+                width={120}
+                height={20}
+              />
+              <Skeleton
+                width={80}
+                height={15}
+                className="mt-1"
+              />
             </>
           ) : (
             <>
-              <h1 className="text-lg font-semibold">{accountInfo?.name || "N/A"}</h1>
-              <p className="text-sm text-gray-500">ID: {accountInfo?.membershipId || "N/A"}</p>
+              <h1 className="text-lg font-semibold">
+                {`${accountInfo?.firstName || "N/A"} ${
+                  accountInfo?.lastName || ""
+                }`.trim()}
+              </h1>
+
+              <p className="text-sm text-gray-500">
+                ID: {accountInfo?.id || "N/A"}
+              </p>
             </>
           )}
         </div>
@@ -95,7 +109,10 @@ const AdminDashboardPage = () => {
           Outstanding Payment
         </h1>
         {paymentsLoading || accountLoading ? (
-          <TableSkeleton rows={4} cols={5} /> // Use TableSkeleton while loading
+          <TableSkeleton
+            rows={4}
+            cols={5}
+          /> // Use TableSkeleton while loading
         ) : (
           <table className="w-full table-auto border-collapse">
             <thead>
@@ -114,8 +131,11 @@ const AdminDashboardPage = () => {
               </tr>
             </thead>
             <tbody>
-            {outstandingPayments?.payments?.map((payment) => (
-                <tr key={payment.id} className="border-b">
+              {outstandingPayments?.payments?.map((payment) => (
+                <tr
+                  key={payment.id}
+                  className="border-b"
+                >
                   <td className="p-4 whitespace-nowrap">
                     <input
                       type="checkbox"

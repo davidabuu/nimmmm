@@ -1,17 +1,37 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from "react";
-import { Modal, Button } from "antd";
+import { useRouter } from "next/navigation";
+import { Modal, Button, message } from "antd";
 import { LogoutOutlined } from "@ant-design/icons";
+import { FaSpinner } from "react-icons/fa";
 
 const LogoutModal: React.FC = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const showModal = () => {
     setIsModalVisible(true);
   };
 
-  const handleOk = () => {
-    // Logic for logging out goes here
-    setIsModalVisible(false);
+  const handleOk = async () => {
+    setLoading(true);
+    try {
+      // Delete the accessToken from localStorage
+      localStorage.removeItem("accessToken");
+
+      // Show a success message
+      message.success("You have been logged out successfully!");
+
+      // Redirect to the home page
+      router.push("/");
+    } catch (error) {
+      // Handle any potential errors
+      message.error("An error occurred while logging out.");
+    } finally {
+      setLoading(false);
+      setIsModalVisible(false);
+    }
   };
 
   const handleCancel = () => {
@@ -31,8 +51,7 @@ const LogoutModal: React.FC = () => {
 
       <Modal
         title={<span className="text-lg font-bold">Logout</span>}
-        visible={isModalVisible}
-        onOk={handleOk}
+        open={isModalVisible}
         onCancel={handleCancel}
         footer={[
           <Button
@@ -44,9 +63,11 @@ const LogoutModal: React.FC = () => {
           <Button
             key="submit"
             type="primary"
-            className="bg-primary"
+            className="bg-primary flex items-center"
             onClick={handleOk}
+            disabled={loading}
           >
+            {loading && <FaSpinner className="animate-spin mr-2" />}
             Logout
           </Button>,
         ]}
