@@ -7,6 +7,8 @@ import fetchGradeCriteria from "../redux/grade/gradeCriteria";
 import changePassword from "../redux/auth/changePassword";
 import getPublication from "../redux/publications/getPublication";
 import getNews from "../redux/news/getPublication";
+import getEvents from "../redux/events/getEvents";
+import getSingleEvent from "../redux/events/getSingleEvent";
 
 export const makeStore = () => {
   return configureStore({
@@ -15,6 +17,8 @@ export const makeStore = () => {
       fetchAccountInfo,
       getHistoryPayments,
       getNews,
+      getSingleEvent,
+      getEvents,
       changePassword,
       getPublication,
       getOutstandingPayments,

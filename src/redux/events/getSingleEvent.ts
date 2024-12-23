@@ -1,42 +1,36 @@
-// imports
+// Imports
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios, { AxiosError } from "axios";
 
-// Define the response type
-interface OutstandingPayment {
+// Define the response type for a single event
+interface Event {
   id: string;
-  amount: number;
-  dueDate: string;
-  status: string;
+  name: string;
   description: string;
 }
 
-interface OutstandingPaymentsResponse {
-  payments: OutstandingPayment[];
-}
-
-// Define the state type
-interface OutstandingPaymentsState {
-  data: OutstandingPaymentsResponse | null;
+// Define the state type for a single event
+interface SingleEventState {
+  data: Event | null;
   loading: boolean;
   error: string | null;
 }
 
-// Initial state
-const initialState: OutstandingPaymentsState = {
+// Initial state for single event
+const initialSingleEventState: SingleEventState = {
   data: null,
   loading: false,
   error: null,
 };
 
-// Define the async thunk
-export const getOutstandingPayments = createAsyncThunk<
-  OutstandingPaymentsResponse, // Success return type
-  string, // Argument type (userId)
+// Define the async thunk for getting a single event by id
+export const getSingleEvent = createAsyncThunk<
+  Event, // Success return type
+  string, // Argument type (eventId)
   { rejectValue: string } // Rejected value type
 >(
-  "outstandingPayments/getOutstandingPayments",
-  async (userId, { rejectWithValue }) => {
+  "Events/getSingleEvent",
+  async (eventId, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem("accessToken");
       if (!token) {
@@ -44,7 +38,7 @@ export const getOutstandingPayments = createAsyncThunk<
       }
 
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BASE_URL}payment/outstanding/${userId}`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}events/${eventId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -56,8 +50,7 @@ export const getOutstandingPayments = createAsyncThunk<
     } catch (error) {
       if (error instanceof AxiosError) {
         return rejectWithValue(
-          error.response?.data?.message ||
-            "Failed to fetch outstanding payments."
+          error.response?.data?.message || "Failed to fetch the event."
         );
       }
       return rejectWithValue("An unknown error occurred.");
@@ -65,22 +58,22 @@ export const getOutstandingPayments = createAsyncThunk<
   }
 );
 
-// Create the slice
-const outstandingPaymentsSlice = createSlice({
-  name: "outstandingPayments",
-  initialState,
+// Create a slice for single event
+const SingleEventSlice = createSlice({
+  name: "SingleEvent",
+  initialState: initialSingleEventState,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(getOutstandingPayments.pending, (state) => {
+      .addCase(getSingleEvent.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(getOutstandingPayments.fulfilled, (state, action) => {
+      .addCase(getSingleEvent.fulfilled, (state, action) => {
         state.loading = false;
         state.data = action.payload;
       })
-      .addCase(getOutstandingPayments.rejected, (state, action) => {
+      .addCase(getSingleEvent.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "An error occurred.";
       });
@@ -88,4 +81,4 @@ const outstandingPaymentsSlice = createSlice({
 });
 
 // Export the reducer
-export default outstandingPaymentsSlice.reducer;
+export default SingleEventSlice.reducer;
