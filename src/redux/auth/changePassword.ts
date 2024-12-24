@@ -29,7 +29,7 @@ export const changePassword = createAsyncThunk(
       return response.data;
     } catch (error) {
       if (error instanceof AxiosError) {
-        // Handle Axios error and return meaningful messages
+        // Handle Axios error and return meaNIMgful messages
         return rejectWithValue(error.response?.data || "An error occurred");
       }
       return rejectWithValue("An unknown error occurred");
