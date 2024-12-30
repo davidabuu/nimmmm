@@ -1,25 +1,19 @@
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash, FaSpinner } from "react-icons/fa";
-import { useDispatch, useSelector } from "react-redux"; // Import the Redux thunk
+import { useDispatch, useSelector } from "react-redux";
 import { notification } from "antd";
 import { AppDispatch, RootState } from "@/src/lib/store";
 import { changePassword } from "@/src/redux/auth/changePassword";
 
 const ChangePassword = () => {
-  const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const [currentPasswordVisible, setCurrentPasswordVisible] = useState(false);
   const [newPasswordVisible, setNewPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
 
   const dispatch = useDispatch<AppDispatch>();
   const { isLoading } = useSelector((state: RootState) => state.changePassword);
-
-  const toggleCurrentPasswordVisibility = () => {
-    setCurrentPasswordVisible(!currentPasswordVisible);
-  };
 
   const toggleNewPasswordVisibility = () => {
     setNewPasswordVisible(!newPasswordVisible);
@@ -39,7 +33,7 @@ const ChangePassword = () => {
     }
 
     try {
-      await dispatch(changePassword({ currentPassword, newPassword })).unwrap();
+      await dispatch(changePassword({ newPassword })).unwrap();
 
       notification.success({
         message: "Success",
@@ -47,13 +41,11 @@ const ChangePassword = () => {
       });
 
       // Clear the form
-      setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
     } catch {
       notification.error({
         message: "Error",
-       
       });
     }
   };
@@ -64,32 +56,6 @@ const ChangePassword = () => {
         <h2 className="text-2xl font-semibold mb-6">Change Password</h2>
 
         <div className="space-y-6">
-          {/* Current Password */}
-          <div>
-            <label
-              htmlFor="currentPassword"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Current Password
-            </label>
-            <div className="relative mt-2">
-              <input
-                type={currentPasswordVisible ? "text" : "password"}
-                id="currentPassword"
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
-                placeholder="Password"
-                className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <div
-                className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
-                onClick={toggleCurrentPasswordVisibility}
-              >
-                {currentPasswordVisible ? <FaEyeSlash /> : <FaEye />}
-              </div>
-            </div>
-          </div>
-
           {/* New Password */}
           <div>
             <label

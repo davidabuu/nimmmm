@@ -9,6 +9,9 @@ import getPublication from "../redux/publications/getPublication";
 import getNews from "../redux/news/getPublication";
 import getEvents from "../redux/events/getEvents";
 import getSingleEvent from "../redux/events/getSingleEvent";
+import validateMember from "../redux/auth/memberValidation";
+import signUpUser from "../redux/auth/signUp";
+import  fetchProfile  from "../redux/auth/profile";
 
 export const makeStore = () => {
   return configureStore({
@@ -16,10 +19,13 @@ export const makeStore = () => {
       loginUser,
       fetchAccountInfo,
       getHistoryPayments,
+      validateMember,
       getNews,
       getSingleEvent,
       getEvents,
       changePassword,
+      signUpUser,
+      fetchProfile,
       getPublication,
       getOutstandingPayments,
       fetchGradeCriteria,
