@@ -68,9 +68,7 @@ const AdminDashboardPage = () => {
           ) : (
             <>
               <h1 className="text-lg font-semibold">
-                {`${accountInfo?.firstName || "N/A"} ${
-                  accountInfo?.lastName || ""
-                }`.trim()}
+                {`${accountInfo?.username || "N/A"} `}
               </h1>
 
               <p className="text-sm text-gray-500">

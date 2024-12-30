@@ -1,23 +1,21 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import Image from "next/image";
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { FaEye, FaEyeSlash, FaSpinner } from "react-icons/fa";
+import { FaSpinner, FaEye, FaEyeSlash } from "react-icons/fa";
 import { message } from "antd";
+import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
+import { AppDispatch } from "../lib/store";
+import { signUpUser } from "../redux/auth/signUp";
 
-;
-import { loginUser } from "../redux/auth/login";
-import { AppDispatch, RootState } from "../lib/store";
-
-export default function LoginForm() {
-  const [passwordVisible, setPasswordVisible] = useState(false);
-  const [membershipNumber, setMembershipNumber] = useState("");
+export default function SignUpPage() {
+  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const dispatch = useDispatch<AppDispatch>();
-  const { loading } = useSelector((state: RootState) => state.loginUser);
   const router = useRouter();
 
   const togglePasswordVisibility = () => {
@@ -27,31 +25,28 @@ export default function LoginForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!membershipNumber.trim() || !password.trim()) {
-      message.error("Please fill in both fields!");
+    if (!email.trim() || !username.trim() || !password.trim()) {
+      message.error("Please fill in all fields!");
       return;
     }
 
+    setLoading(true);
     try {
       const resultAction = await dispatch(
-        loginUser({ email: membershipNumber, password })
+        signUpUser({ email, username, password })
       );
 
-      if (loginUser.fulfilled.match(resultAction)) {
-        // Validation successful
-        const accessToken = resultAction.payload?.accessToken; // Assuming accessToken is in the payload
-        if (accessToken) {
-          localStorage.setItem("accessToken", accessToken);
-        }
-        message.success("Validation successful!");
-        router.push("/admin-dashboard");
-      } else if (loginUser.rejected.match(resultAction)) {
-        // Validation failed
-        const errorMessage = resultAction.payload as string; // A
-        message.error(errorMessage);
+      if (signUpUser.fulfilled.match(resultAction)) {
+        message.success("Signup successful! Redirecting to login page.");
+        router.push("/login");
+      } else if (signUpUser.rejected.match(resultAction)) {
+        const errorMessage = resultAction.payload as string;
+        message.error(errorMessage || "Signup failed. Please try again.");
       }
-    } catch (error) {
+    } catch {
       message.error("An unexpected error occurred. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -65,7 +60,7 @@ export default function LoginForm() {
         }}
       ></div>
 
-      {/* Right side for the login form */}
+      {/* Right side for the signup form */}
       <div className="flex justify-center w-full md:w-1/2 p-8">
         <div className="max-w-md w-full bg-white">
           <div className="mb-6">
@@ -77,28 +72,46 @@ export default function LoginForm() {
               height={50}
             />
             <h1 className="md:text-2xl text-lg text-secondary font-semibold mt-2">
-              Welcome to Nigerian Institute of Management Membership Portal
+              Sign Up
             </h1>
             <p className="mt-2 text-sm text-secondary">
-              Enter your login details below to access the membership portal
+              Create your account to access the membership portal.
             </p>
           </div>
 
           <form onSubmit={handleSubmit}>
-            {/* Membership Number Input */}
+            {/* Email Input */}
             <div className="mb-2">
               <label
-                htmlFor="membershipNumber"
+                htmlFor="email"
                 className="block text-gray-700"
               >
-                Membership Email
+                Email Address
+              </label>
+              <input
+                type="email"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email"
+                className="w-full p-2 border border-gray-300 mt-1 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+
+            {/* Username Input */}
+            <div className="mb-2">
+              <label
+                htmlFor="username"
+                className="block text-gray-700"
+              >
+                Username
               </label>
               <input
                 type="text"
-                id="membershipNumber"
-                value={membershipNumber}
-                onChange={(e) => setMembershipNumber(e.target.value)}
-                placeholder="Enter your membership number"
+                id="username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Enter your username"
                 className="w-full p-2 border border-gray-300 mt-1 focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
             </div>
@@ -131,16 +144,6 @@ export default function LoginForm() {
               </div>
             </div>
 
-            {/* Forgot Password Link */}
-            <div className="text-right mb-4">
-              <a
-                href="/forgot-password"
-                className="text-red-600 hover:underline text-sm font-semibold"
-              >
-                Forgot Password?
-              </a>
-            </div>
-
             {/* Submit Button */}
             <div>
               <button
@@ -151,10 +154,10 @@ export default function LoginForm() {
                 {loading ? (
                   <>
                     <FaSpinner className="animate-spin mr-1" />
-                    Logging in...
+                    Signing up...
                   </>
                 ) : (
-                  "Login"
+                  "Sign Up"
                 )}
               </button>
             </div>

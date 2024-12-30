@@ -5,19 +5,12 @@ import { AxiosError } from "axios";
 // Define the async thunk for changing the password
 export const changePassword = createAsyncThunk(
   "account/changePassword",
-  async (
-    {
-      currentPassword,
-      newPassword,
-    }: { currentPassword: string; newPassword: string },
-    { rejectWithValue }
-  ) => {
+  async ({ newPassword }: { newPassword: string }, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem("accessToken"); // Retrieve access token from localStorage
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_BASE_URL}account/change-password`,
         {
-          currentPassword,
           newPassword,
         },
         {

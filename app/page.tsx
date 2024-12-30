@@ -1,12 +1,12 @@
-import Login from '@/src/components/Login'
-import React from 'react'
+import MemberValidate from "@/src/components/MemberValidate";
+import React from "react";
 
 const page = () => {
   return (
     <div>
-      <Login/>
+      <MemberValidate />
     </div>
-  )
-}
+  );
+};
 
-export default page
+export default page;

@@ -1,11 +1,66 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import ChangePassword from "./ChangePassword";
 import { FaBell } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
+import "react-loading-skeleton/dist/skeleton.css"; 
+import Skeleton from "react-loading-skeleton"; // Add skeleton loader package if not installed
+import { RootState, AppDispatch } from "@/src/lib/store";
+import { fetchProfile } from "@/src/redux/auth/profile";
 
 const AdminProfilePage = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { profile, loading } = useSelector(
+    (state: RootState) => state.fetchProfile
+  );
+
+  const [formData, setFormData] = useState({
+    fullName: "",
+    membershipNumber: "",
+    email: "",
+    yearOfInduction: "",
+    gender: "",
+    dateOfBirth: "",
+    stateOfOrigin: "",
+    lga: "",
+    membershipCadre: "",
+    branch: "",
+    address: "",
+  });
+
   const [profilePicture, setProfilePicture] = useState<string | null>(null);
+
+  // Fetch profile data on mount
+  useEffect(() => {
+    dispatch(fetchProfile()); // Replace with actual token
+  }, [dispatch]);
+
+  // Update form data when profile loads
+  useEffect(() => {
+    if (profile) {
+      setFormData({
+        fullName: profile.name,
+        membershipNumber: profile.id, // Adjust based on actual fields
+        email: profile.email,
+        yearOfInduction: "", // Populate from profile if available
+        gender: "",
+        dateOfBirth: "",
+        stateOfOrigin: "",
+        lga: "",
+        membershipCadre: "",
+        branch: "",
+        address: "",
+      });
+      setProfilePicture(profile.avatar || null);
+    }
+  }, [profile]);
+
+  // Handle input change
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
   // Handle image upload
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -18,12 +73,12 @@ const AdminProfilePage = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted");
+    console.log("Form submitted:", formData);
   };
 
   return (
-    <div className=" w-full ">
-      <div className="hidden md:flex float-right mr-3  mt-4 bg-blue-900 text-white p-2 rounded-full shadow-lg hover:bg-blue-70 transition duration-300">
+    <div className="w-full">
+      <div className="hidden md:flex float-right mr-3 mt-4 bg-blue-900 text-white p-2 rounded-full shadow-lg hover:bg-blue-70 transition duration-300">
         <FaBell size={20} />
       </div>
 
@@ -37,16 +92,24 @@ const AdminProfilePage = () => {
             {/* Profile Picture Section */}
             <div className="flex flex-col items-center">
               <div className="relative w-40 h-40 mb-4">
-                <Image
-                  src={profilePicture || "/nnpc.png"} // Placeholder for profile picture
-                  alt="Profile Picture"
-                  className="w-full h-full object-cover shadow-md"
-                  width={160}
-                  height={160}
-                />
+                {loading ? (
+                  <Skeleton
+                    circle
+                    height={160}
+                    width={160}
+                  />
+                ) : (
+                  <Image
+                    src={profilePicture || "/nnpc.png"} // Placeholder for profile picture
+                    alt="Profile Picture"
+                    className="w-full h-full object-cover shadow-md"
+                    width={160}
+                    height={160}
+                  />
+                )}
                 <label
                   htmlFor="fileUpload"
-                  className="absolute inset-x-0 bottom-0 bg-gray-800 bg-opacity-75 text-white text-sm text-center py-2 cursor-pointer "
+                  className="absolute inset-x-0 bottom-0 bg-gray-800 bg-opacity-75 text-white text-sm text-center py-2 cursor-pointer"
                 >
                   Upload Photo
                 </label>
@@ -67,112 +130,55 @@ const AdminProfilePage = () => {
             {/* Form Fields */}
             <div className="lg:col-span-1">
               <div className="grid grid-cols-2 gap-6">
-                {/* Full Name */}
-                <div className="flex flex-col">
-                  <label className="text-gray-700 font-medium mb-1">
-                    Full Name
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="First name"
-                    className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div className="flex flex-col">
-                  <label className="text-gray-700 font-medium mb-1">
-                    Membership Number
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Membership Number"
-                    className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-
-                {/* Email Address */}
-                <div className="flex flex-col">
-                  <label className="text-gray-700 font-medium mb-1">
-                    Email Address
-                  </label>
-                  <input
-                    type="email"
-                    placeholder="Email Address"
-                    className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div className="flex flex-col">
-                  <label className="text-gray-700 font-medium mb-1">
-                    Year of Induction
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Year of Induction"
-                    className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-
-                {/* Gender */}
-                <div className="flex flex-col">
-                  <label className="text-gray-700 font-medium mb-1">
-                    Gender
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Gender"
-                    className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div className="flex flex-col">
-                  <label className="text-gray-700 font-medium mb-1">
-                    Date of Birth
-                  </label>
-                  <input
-                    type="date"
-                    className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-
-                {/* State of Origin */}
-                <div className="flex flex-col">
-                  <label className="text-gray-700 font-medium mb-1">
-                    State of Origin
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="State of Origin"
-                    className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div className="flex flex-col">
-                  <label className="text-gray-700 font-medium mb-1">LGA</label>
-                  <input
-                    type="text"
-                    placeholder="LGA"
-                    className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-
-                {/* Membership Cadre */}
-                <div className="flex flex-col">
-                  <label className="text-gray-700 font-medium mb-1">
-                    Membership Cadre
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Membership Cadre"
-                    className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div className="flex flex-col">
-                  <label className="text-gray-700 font-medium mb-1">
-                    Branch/Chapter
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Branch/Chapter"
-                    className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
+                {[
+                  { label: "Full Name", name: "fullName", type: "text" },
+                  {
+                    label: "Membership Number",
+                    name: "membershipNumber",
+                    type: "text",
+                  },
+                  { label: "Email Address", name: "email", type: "email" },
+                  {
+                    label: "Year of Induction",
+                    name: "yearOfInduction",
+                    type: "text",
+                  },
+                  { label: "Gender", name: "gender", type: "text" },
+                  { label: "Date of Birth", name: "dateOfBirth", type: "date" },
+                  {
+                    label: "State of Origin",
+                    name: "stateOfOrigin",
+                    type: "text",
+                  },
+                  { label: "LGA", name: "lga", type: "text" },
+                  {
+                    label: "Membership Cadre",
+                    name: "membershipCadre",
+                    type: "text",
+                  },
+                  { label: "Branch/Chapter", name: "branch", type: "text" },
+                ].map(({ label, name, type }, idx) => (
+                  <div
+                    className="flex flex-col"
+                    key={idx}
+                  >
+                    <label className="text-gray-700 font-medium mb-1">
+                      {label}
+                    </label>
+                    {loading ? (
+                      <Skeleton height={40} />
+                    ) : (
+                      <input
+                        type={type}
+                        name={name}
+                        value={formData[name as keyof typeof formData] || ""}
+                        onChange={handleInputChange}
+                        placeholder={label}
+                        className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    )}
+                  </div>
+                ))}
               </div>
 
               {/* Address */}
@@ -180,24 +186,32 @@ const AdminProfilePage = () => {
                 <label className="text-gray-700 font-medium mb-1">
                   Address
                 </label>
-                <input
-                  type="text"
-                  placeholder="Address"
-                  className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+                {loading ? (
+                  <Skeleton height={40} />
+                ) : (
+                  <input
+                    type="text"
+                    name="address"
+                    value={formData.address}
+                    onChange={handleInputChange}
+                    placeholder="Address"
+                    className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                )}
               </div>
+
+              {/* Save Changes Button */}
               <div className="lg:col-span-2 flex justify-start mt-6">
                 <button
                   type="submit"
-                  className=" bg-primary text-white px-4 py-2  hover:bg-blue-800 transition"
+                  disabled={loading}
+                  className="bg-primary text-white px-4 py-2 hover:bg-blue-800 transition"
                 >
-                  Save changes
+                  {loading ? "Loading..." : "Save changes"}
                 </button>
               </div>
               <ChangePassword />
             </div>
-
-            {/* Save Changes Button */}
           </form>
         </div>
       </div>
