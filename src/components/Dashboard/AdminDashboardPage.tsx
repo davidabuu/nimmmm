@@ -13,6 +13,7 @@ import TableSkeleton from "./TableSkeleton";
 
 const AdminDashboardPage = () => {
   const dispatch = useDispatch<AppDispatch>();
+  
 
   // Access accountInfo and loading state from Redux
   const { loading: accountLoading, accountInfo } = useSelector(
@@ -23,12 +24,12 @@ const AdminDashboardPage = () => {
   const { data: outstandingPayments, loading: paymentsLoading } = useSelector(
     (state: RootState) => state.getOutstandingPayments
   );
-
+  console.log(outstandingPayments);
   // Fetch accountInfo and outstanding payments data on component mount
   useEffect(() => {
     dispatch(fetchAccountInfo()).then((action) => {
       if (fetchAccountInfo.fulfilled.match(action)) {
-        const membershipId = action.payload.data?.membershipId;
+        const membershipId = action.payload.data?.id;
         if (membershipId) {
           dispatch(getOutstandingPayments(membershipId));
         }
@@ -63,12 +64,12 @@ const AdminDashboardPage = () => {
                 width={80}
                 height={15}
                 className="mt-1"
-              />
+            />
             </>
           ) : (
             <>
               <h1 className="text-lg font-semibold">
-                {`${accountInfo?.username || "N/A"} `}
+                {`${accountInfo?.member?.firstName || "N/A"} `}
               </h1>
 
               <p className="text-sm text-gray-500">
@@ -79,27 +80,35 @@ const AdminDashboardPage = () => {
         </div>
       </div>
 
-      {/* Membership Grades Section */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
-        <Box
-          imageSrc="/Frame1.png"
-          title="Fellow"
-          description="Membership Grade"
-          link="/membership"
-        />
-        <Box
-          imageSrc="/Frame2.png"
-          title="Associate"
-          description="Membership Grade"
-          link="/membership"
-        />
-        <Box
-          imageSrc="/Frame3.png"
-          title="Member"
-          description="Membership Grade"
-          link="/membership"
-        />
-      </div>
+  {/* Box for Membership Grade */}
+  <Box
+    imageSrc="/Frame1.png" // Path to the image
+    title="Grade" // Title of the box
+    description={accountLoading ? "" : accountInfo?.member?.grade || "N/A"} // Description
+   
+    loading={accountLoading} // Pass the loading state
+  />
+
+  {/* Box for Membership Chapter */}
+  <Box
+    imageSrc="/Frame2.png" // Path to the image
+    title="Chapter" // Title of the box
+    description={accountLoading ? "" : accountInfo?.member?.chapter || "N/A"} // Description
+   
+    loading={accountLoading} // Pass the loading state
+  />
+
+  {/* Box for Outstanding Fees */}
+  <Box
+    imageSrc="/Frame3.png" // Path to the image
+    title="Outstanding Fees" // Title of the box
+    description={accountLoading ? "" : "Outstanding Fees"} // Description
+    
+    loading={accountLoading} // Pass the loading state
+  />
+</div>
+
 
       {/* Outstanding Payments Section */}
       <div className="overflow-x-auto mt-6 bg-white">
@@ -129,7 +138,7 @@ const AdminDashboardPage = () => {
               </tr>
             </thead>
             <tbody>
-              {outstandingPayments?.payments?.map((payment) => (
+              {outstandingPayments?.map((payment) => (
                 <tr
                   key={payment.id}
                   className="border-b"
@@ -141,7 +150,7 @@ const AdminDashboardPage = () => {
                     />
                   </td>
                   <td className="p-4 whitespace-nowrap text-sm text-gray-500">
-                    {payment.dueDate}
+                    {new Date(payment.createdAt).toLocaleDateString("en-GB")}
                   </td>
                   <td className="p-4 whitespace-nowrap font-medium">
                     {payment.description || "N/A"}
@@ -150,7 +159,11 @@ const AdminDashboardPage = () => {
                     ₦{payment.amount.toLocaleString()}
                   </td>
                   <td className="p-4 whitespace-nowrap">
-                    <a href="/payment-gateway">
+                    <a
+                      href={`/payment-gateway?description=${encodeURIComponent(
+                        payment.description
+                      )}&amount=${payment.amount}`}
+                    >
                       <button className="bg-primary text-white px-4 py-2 hover:bg-blue-800 transition">
                         Proceed to Payment
                       </button>

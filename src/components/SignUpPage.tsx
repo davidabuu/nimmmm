@@ -5,6 +5,7 @@ import { FaSpinner, FaEye, FaEyeSlash } from "react-icons/fa";
 import { message } from "antd";
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { AppDispatch } from "../lib/store";
 import { signUpUser } from "../redux/auth/signUp";
 
@@ -38,7 +39,7 @@ export default function SignUpPage() {
 
       if (signUpUser.fulfilled.match(resultAction)) {
         message.success("Signup successful! Redirecting to login page.");
-        router.push("/login");
+        router.push("/");
       } else if (signUpUser.rejected.match(resultAction)) {
         const errorMessage = resultAction.payload as string;
         message.error(errorMessage || "Signup failed. Please try again.");
@@ -162,6 +163,18 @@ export default function SignUpPage() {
               </button>
             </div>
           </form>
+
+          {/* Login Prompt */}
+          <div className="mt-4 text-center">
+            <p className="text-sm text-gray-600">
+              Already have an account?{" "}
+              <Link href="/">
+                <p className="font-semibold text-indigo-600 hover:underline">
+                  Login
+                </p>
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
     </div>

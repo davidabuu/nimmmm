@@ -1,4 +1,4 @@
-// imports
+// Imports
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios, { AxiosError } from "axios";
 
@@ -6,18 +6,14 @@ import axios, { AxiosError } from "axios";
 interface OutstandingPayment {
   id: string;
   amount: number;
-  dueDate: string;
+  createdAt: string;
   status: string;
   description: string;
 }
 
-interface OutstandingPaymentsResponse {
-  payments: OutstandingPayment[];
-}
-
 // Define the state type
 interface OutstandingPaymentsState {
-  data: OutstandingPaymentsResponse | null;
+  data: OutstandingPayment[] | null;
   loading: boolean;
   error: string | null;
 }
@@ -31,7 +27,7 @@ const initialState: OutstandingPaymentsState = {
 
 // Define the async thunk
 export const getOutstandingPayments = createAsyncThunk<
-  OutstandingPaymentsResponse, // Success return type
+  OutstandingPayment[], // Success return type (array of payments)
   string, // Argument type (userId)
   { rejectValue: string } // Rejected value type
 >(
@@ -52,7 +48,7 @@ export const getOutstandingPayments = createAsyncThunk<
         }
       );
 
-      return response.data;
+      return response.data; // Assuming the response is an array of payments
     } catch (error) {
       if (error instanceof AxiosError) {
         return rejectWithValue(
@@ -78,7 +74,7 @@ const outstandingPaymentsSlice = createSlice({
       })
       .addCase(getOutstandingPayments.fulfilled, (state, action) => {
         state.loading = false;
-        state.data = action.payload;
+        state.data = action.payload; // Array of payments
       })
       .addCase(getOutstandingPayments.rejected, (state, action) => {
         state.loading = false;

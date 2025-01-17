@@ -27,7 +27,7 @@ const PaymentDetails: React.FC = () => {
       </div>
 
       {/* Proceed to Payment Button */}
-      <Link href="/payment-gateway">
+      <Link href="/payment-gateway?amount=10000&description=License">
         <button className="bg-primary text-white py-3 px-8 text-lg font-medium hover:bg-blue-700 transition duration-300 shadow-md">
           Proceed to Payment (10,000)
         </button>
