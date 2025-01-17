@@ -2,7 +2,7 @@
 "use client";
 import Image from "next/image";
 import { useDispatch, useSelector } from "react-redux";
-// Adjust import paths as necessary
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { message } from "antd";
 import { FaSpinner } from "react-icons/fa"; // Import the spinner icon
@@ -14,7 +14,7 @@ export default function ResetPassword() {
   const { loading,  error } = useSelector(
     (state: RootState) => state.requestOTP
   );
-
+  const router = useRouter();
   const [email, setEmail] = useState("");
 
   const handleRequestOTP = async (e: React.FormEvent) => {
@@ -27,6 +27,7 @@ export default function ResetPassword() {
 
     try {
       await dispatch(requestOTP({ email })).unwrap();
+      router.push("/verify-otp"); // Navigate to verify-otp pag
       message.success("OTP has been sent to your email.");
     } catch (err) {
       message.error(error || "An error occurred while requesting OTP.");
