@@ -28,19 +28,19 @@ const AdminHistoryPage = () => {
           imageSrc="/Frame1.png"
           title="Fellow"
           description="Membership Grade"
-          link="/membership"
+       
         />
         <Box
           imageSrc="/Frame2.png"
           title="Associate"
           description="Membership Grade"
-          link="/membership"
+      
         />
         <Box
           imageSrc="/Frame3.png"
           title="Member"
           description="Membership Grade"
-          link="/membership"
+        
         />
       </div>
       <div className="overflow-x-auto mt-6 bg-white">
