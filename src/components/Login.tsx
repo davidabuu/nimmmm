@@ -6,8 +6,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { FaEye, FaEyeSlash, FaSpinner } from "react-icons/fa";
 import { message } from "antd";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
-;
 import { loginUser } from "../redux/auth/login";
 import { AppDispatch, RootState } from "../lib/store";
 
@@ -38,16 +38,14 @@ export default function LoginForm() {
       );
 
       if (loginUser.fulfilled.match(resultAction)) {
-        // Validation successful
         const accessToken = resultAction.payload?.accessToken; // Assuming accessToken is in the payload
-        if (accessToken) {
+    if (accessToken) {
           localStorage.setItem("accessToken", accessToken);
         }
         message.success("Validation successful!");
         router.push("/admin-dashboard");
       } else if (loginUser.rejected.match(resultAction)) {
-        // Validation failed
-        const errorMessage = resultAction.payload as string; // A
+        const errorMessage = resultAction.payload as string;
         message.error(errorMessage);
       }
     } catch (error) {
@@ -87,10 +85,7 @@ export default function LoginForm() {
           <form onSubmit={handleSubmit}>
             {/* Membership Number Input */}
             <div className="mb-2">
-              <label
-                htmlFor="membershipNumber"
-                className="block text-gray-700"
-              >
+              <label htmlFor="membershipNumber" className="block text-gray-700">
                 Membership Email
               </label>
               <input
@@ -105,10 +100,7 @@ export default function LoginForm() {
 
             {/* Password Input with Eye Toggle */}
             <div className="mb-4 relative">
-              <label
-                htmlFor="password"
-                className="block text-gray-700"
-              >
+              <label htmlFor="password" className="block text-gray-700">
                 Password
               </label>
               <input
@@ -159,6 +151,18 @@ export default function LoginForm() {
               </button>
             </div>
           </form>
+
+          {/* Bottom Section for Signup */}
+          <div className="mt-4 text-center">
+            <p className="text-sm text-gray-700">
+              Don’t have an account?{' '}
+              <Link href="/member-validate">
+                <p className="text-primary font-semibold hover:underline">
+                  Create Account
+                </p>
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
     </div>

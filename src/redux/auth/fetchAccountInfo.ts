@@ -1,19 +1,28 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
+/// Define the structure of the account info
+export interface MemberInfo {
+  firstName: string;
+  lastName: string;
+  email: string;
+  chapter:string;
+  grade:string;
+  key: string; // Additional fields, if any
+}
+
+export interface AccountInfo {
+  id: string;
+  member: MemberInfo;
+  key: string; // Additional fields, if any
+}
+
 // Define the shape of the state
-interface AccountInfoState {
-  accountInfo: Record<string, string> | null;
+export interface AccountInfoState {
+  accountInfo: AccountInfo | null;
   loading: boolean;
   error: string | null;
 }
-
-// Initial state
-const initialState: AccountInfoState = {
-  accountInfo: null,
-  loading: false,
-  error: null,
-};
 
 // Async thunk for fetching account information
 export const fetchAccountInfo = createAsyncThunk(
@@ -29,6 +38,8 @@ export const fetchAccountInfo = createAsyncThunk(
           },
         }
       );
+      localStorage.setItem("accountInfo", response.data.data.email);
+      localStorage.setItem("userId", response.data.data.id);
       return response.data; // Assuming the API returns account information in the response body
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
@@ -38,6 +49,13 @@ export const fetchAccountInfo = createAsyncThunk(
     }
   }
 );
+
+// Initial state
+const initialState: AccountInfoState = {
+  accountInfo: null,
+  loading: false,
+  error: null,
+};
 
 // Create the slice
 const accountSlice = createSlice({

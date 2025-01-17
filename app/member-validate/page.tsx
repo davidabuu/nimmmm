@@ -1,4 +1,5 @@
-import LoginForm from "@/src/components/Login";
+
+import MemberValidate from "@/src/components/MemberValidate";
 import { Metadata } from "next/types";
 import React from "react";
 export const metadata: Metadata = {
@@ -9,7 +10,7 @@ export const metadata: Metadata = {
 const page = () => {
   return (
     <div>
-      <LoginForm />
+      <MemberValidate/>
     </div>
   );
 };

@@ -1,10 +1,10 @@
-import MemberValidate from "@/src/components/MemberValidate";
+import LoginForm from "@/src/components/Login";
 import React from "react";
 
 const page = () => {
   return (
     <div>
-      <MemberValidate />
+      <LoginForm/>
     </div>
   );
 };

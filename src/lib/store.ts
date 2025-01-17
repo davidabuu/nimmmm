@@ -12,6 +12,8 @@ import getSingleEvent from "../redux/events/getSingleEvent";
 import validateMember from "../redux/auth/memberValidation";
 import signUpUser from "../redux/auth/signUp";
 import  fetchProfile  from "../redux/auth/profile";
+import  initializePayment  from "../redux/payment/initializePayment";
+import requestOTP  from "../redux/auth/requestOtp";
 
 export const makeStore = () => {
   return configureStore({
@@ -22,9 +24,11 @@ export const makeStore = () => {
       validateMember,
       getNews,
       getSingleEvent,
+      initializePayment,
       getEvents,
       changePassword,
       signUpUser,
+      requestOTP,
       fetchProfile,
       getPublication,
       getOutstandingPayments,

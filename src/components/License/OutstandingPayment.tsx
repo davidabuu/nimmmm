@@ -4,11 +4,13 @@ import { FaMoneyBillAlt } from "react-icons/fa";
 interface OutstandingPaymentsProps {
   message: string; // Text for the paragraph
   buttonText: string; // Text for the button
+  onButtonClick: () => void; // Handler for button click
 }
 
 const OutstandingPayments: React.FC<OutstandingPaymentsProps> = ({
   message,
   buttonText,
+  onButtonClick,
 }) => {
   return (
     <div className="flex mx-4 md:mx-0 flex-col items-center justify-center min-h-[70vh] bg-white px-4">
@@ -23,7 +25,10 @@ const OutstandingPayments: React.FC<OutstandingPaymentsProps> = ({
       </p>
 
       {/* Button */}
-      <button className="bg-primary text-white py-3 px-6 hover:bg-blue-700 transition duration-300">
+      <button
+        onClick={onButtonClick}
+        className="bg-primary text-white py-3 px-6 hover:bg-blue-700 transition duration-300"
+      >
         {buttonText}
       </button>
     </div>
