@@ -31,15 +31,13 @@ const initialState: HistoryPaymentsState = {
 };
 
 // Define the async thunk
-export const getHistoryPayments = createAsyncThunk<
-  HistoryPaymentsResponse, // Success return type
-  string, // Argument type (userId)
-  { rejectValue: string } // Rejected value type
->(
+export const getHistoryPayments = createAsyncThunk<HistoryPaymentsResponse>( // Success return type
+// Argument type (userId)
   "HistoryPayments/getHistoryPayments",
-  async (userId, { rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem("accessToken");
+      const userId = localStorage.getItem("userId");
       if (!token) {
         throw new Error("No access token found. Please log in again.");
       }
@@ -57,8 +55,7 @@ export const getHistoryPayments = createAsyncThunk<
     } catch (error) {
       if (error instanceof AxiosError) {
         return rejectWithValue(
-          error.response?.data?.message ||
-            "Failed to fetch History payments."
+          error.response?.data?.message || "Failed to fetch History payments."
         );
       }
       return rejectWithValue("An unknown error occurred.");
@@ -83,7 +80,7 @@ const HistoryPaymentsSlice = createSlice({
       })
       .addCase(getHistoryPayments.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload || "An error occurred.";
+        state.error = action.payload as string || "An error occurred.";
       });
   },
 });

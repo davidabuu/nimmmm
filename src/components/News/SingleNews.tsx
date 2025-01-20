@@ -1,10 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { FiArrowLeft, FiClock, FiExternalLink } from "react-icons/fi";
-import { FaBell } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/src/lib/store"; // Adjust to your store path
+import { getSingleNews } from "@/src/redux/news/getSingleNews";
+import { useSearchParams } from "next/navigation";
+import {  FiClock, FiExternalLink } from "react-icons/fi";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+import { IoArrowBack } from "react-icons/io5";
 
 interface RelatedNewsProps {
   id: string;
@@ -29,7 +35,7 @@ const RelatedNewsCard = ({
       <div className="relative w-24 h-16 flex-shrink-0">
         <Image
           src={imageUrl}
-          alt=""
+          alt={title}
           fill
           className="object-cover rounded-md"
           sizes="(max-width: 96px) 100vw, 96px"
@@ -52,46 +58,41 @@ const RelatedNewsCard = ({
 
 export default function NewsArticle() {
   const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch<AppDispatch>();
+  const searchParams = useSearchParams();
+  const id = searchParams.get("id");
+
+  const { data: singleNews, loading, error } = useSelector(
+    (state: RootState) => state.getSingleNews
+  );
 
   const relatedNews: RelatedNewsProps[] = [
     {
       id: "1",
-      title:
-        "The Nigerian Institute of Management (Chartered) has released its Newsletter for Public Consumption.",
+      title: "Related news item 1",
       date: "October 27, 2024",
       time: "2:36 pm",
       imageUrl: "/nnpc.png",
     },
     {
       id: "2",
-      title:
-        "The Nigerian Institute of Management (Chartered) has released its Newsletter for Public Consumption.",
-      date: "October 27, 2024",
-      time: "2:36 pm",
-      imageUrl: "/nnpc.png",
-    },
-    {
-      id: "3",
-      title:
-        "The Nigerian Institute of Management (Chartered) has released its Newsletter for Public Consumption.",
-      date: "October 27, 2024",
-      time: "2:36 pm",
-      imageUrl: "/nnpc.png",
-    },
-    {
-      id: "4",
-      title:
-        "The Nigerian Institute of Management (Chartered) has released its Newsletter for Public Consumption.",
+      title: "Related news item 2",
       date: "October 27, 2024",
       time: "2:36 pm",
       imageUrl: "/nnpc.png",
     },
   ];
 
+  useEffect(() => {
+    if (id) {
+      dispatch(getSingleNews(id));
+    }
+  }, [dispatch, id]);
+
   const handleDownloadNewsletter = async () => {
     setIsLoading(true);
     try {
-      // Handle newsletter download
+      // Handle newsletter download logic
       console.log("Downloading newsletter...");
     } catch (error) {
       console.error("Error downloading newsletter:", error);
@@ -101,81 +102,81 @@ export default function NewsArticle() {
   };
 
   return (
-    <div className="mx-10">
-      {/* Notification Icon */}
-      <div className="float-right hidden md:flex mr-3 mt-4 bg-blue-900 text-white p-2 rounded-full shadow-lg hover:bg-blue-700 transition duration-300">
-        <FaBell size={20} />
-      </div>
-
-      <h2 className="text-xl mt-6 px-4 py-2 border-b font-semibold mb-4">
-        News
-      </h2>
-      <main className="min-h-screen bg-gray-50 pb-12">
-        {/* Back Navigation */}
-        <Link
-          href="/news"
-          className="fixed top-4 left-4 z-10 p-2 bg-white rounded-full shadow-md hover:bg-gray-50 transition-colors"
-          aria-label="Back to news"
-        >
-          <FiArrowLeft className="w-5 h-5" />
+    <div className="">
+      <div className="flex items-center gap-4 border-b border-gray-200 text-white p-4 mb-6">
+        <Link href="/news">
+          <button className="bg-primary rounded-full p-2">
+            <IoArrowBack className="w-6 h-6" />
+          </button>
         </Link>
+        <h1 className="text-xl text-primary font-medium">News</h1>
+      </div>
+      <main className="min-h-screen bg-gray-50 pb-12">
+       
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-3 gap-6 pt-16">
-            {/* Main Content */}
             <div className="lg:col-span-2">
-              {/* Header Banner */}
-              <div className="bg-red-600 text-white p-6 rounded-t-lg">
-                <h1 className="text-2xl sm:text-3xl font-bold mb-4">
-                  The Nigerian Institute of Management(Chartered) has released
-                  its&apos; Newsletter for Public Consumption.
-                </h1>
-                <div className="flex items-center gap-2 text-sm">
-                  <FiClock className="w-4 h-4" />
-                  <time dateTime="2024-10-27">October 27, 2024</time>
-                  <span>•</span>
-                  <time dateTime="14:36">2:36 pm</time>
-                </div>
-              </div>
-
-              {/* Article Content */}
-              <article className="bg-white p-6 rounded-b-lg shadow-sm">
-                <div className="relative h-[300px] sm:h-[400px] mb-6">
-                  <Image
-                    src="/nnpc.png"
-                    alt="NIM members group photo"
-                    width={200}
-                    height={200}
-                    className="object-cover rounded-lg"
-                  />
-                </div>
-
-                <div className="prose prose-lg max-w-none">
-                  <p>
-                    We&apos;re thrilled to announce the release of the Q3 2024
-                    edition of the NIM Newsletter! Dive deep into the exciting
-                    world of insights, trends and updates curated just for you
-                    by our team of experts.
-                  </p>
-                  <p>
-                    Explore the latest updates of the Institute, management
-                    strategies, industry highlights and exclusive member
-                    features. Stay informed and engaged as we sail through your
-                    professional journey.
-                  </p>
-                  <div className="not-prose">
-                    <button
-                      onClick={handleDownloadNewsletter}
-                      disabled={isLoading}
-                      className="inline-flex items-center my-4 gap-2 px-6 py-3 bg-primary text-white  hover:bg-blue-700 transition-colors disabled:opacity-50"
-                    >
-                      <FiExternalLink className="w-4 h-4" />
-                      {isLoading ? "Downloading..." : "Download Newsletter"}
-                    </button>
+              {/* Skeleton Loader */}
+              {loading ? (
+                <Skeleton height={200} count={3} />
+              ) : error ? (
+                <p className="text-red-500">Error: {error}</p>
+              ) : (
+                <>
+                  <div className="bg-red-600 text-white p-6 rounded-t-lg">
+                    <h1 className="text-2xl sm:text-3xl font-bold mb-4">
+                      {singleNews?.title}
+                    </h1>
+                    <div className="flex items-center gap-2 text-sm">
+                      <FiClock className="w-4 h-4" />
+                      <time dateTime={singleNews?.createdAt}>
+                        {new Date(singleNews?.createdAt || "").toLocaleDateString(
+                          "en-US",
+                          { year: "numeric", month: "long", day: "numeric" }
+                        )}
+                      </time>
+                      <span>•</span>
+                      <time dateTime={singleNews?.createdAt}>
+                        {new Date(singleNews?.createdAt || "").toLocaleTimeString(
+                          "en-US"
+                        )}
+                      </time>
+                    </div>
                   </div>
-                  <p className="mt-4">Happy reading!</p>
-                </div>
-              </article>
+
+                  <article className="bg-white p-6 rounded-b-lg shadow-sm">
+                    <div className="relative h-[300px] sm:h-[400px] mb-6">
+                      {singleNews? (
+                        <Image
+                          src={'/nnpc.png'}
+                          alt={singleNews.title}
+                          width={200}
+                          height={160}
+                          className=" rounded-lg"
+                        />
+                      ) : (
+                        <Skeleton height={300} />
+                      )}
+                    </div>
+
+                    <div className="prose prose-lg max-w-none">
+                      <p>{singleNews?.content}</p>
+                      <div className="not-prose">
+                        <button
+                          onClick={handleDownloadNewsletter}
+                          disabled={isLoading}
+                          className="inline-flex items-center my-4 gap-2 px-6 py-3 bg-primary text-white hover:bg-blue-700 transition-colors disabled:opacity-50"
+                        >
+                          <FiExternalLink className="w-4 h-4" />
+                          {isLoading ? "Downloading..." : "Download Newsletter"}
+                        </button>
+                      </div>
+                      <p className="mt-4">Happy reading!</p>
+                    </div>
+                  </article>
+                </>
+              )}
             </div>
 
             {/* Related News Sidebar */}

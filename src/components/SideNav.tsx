@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { HomeOutlined, CloseOutlined, LogoutOutlined } from "@ant-design/icons";
 import { Modal, Button } from "antd"; // Import Modal from Ant Design
-import { FaBars, FaBell, FaRegAddressCard } from "react-icons/fa"; // Hamburger icon
+import { FaBars, FaRegAddressCard } from "react-icons/fa"; // Hamburger icon
 import Image from "next/image";
 
 import { RxCountdownTimer } from "react-icons/rx";
@@ -39,16 +39,16 @@ const SideNav: React.FC = () => {
   return (
     <>
       {/* Hamburger Menu for smaller screens */}
-      <div className="md:hidden flex items-center justify-between w-full p-4">
-        <FaBars
-          className="text-3xl cursor-pointer justify-start"
-          onClick={toggleSideNav}
-        />
-        <h1 className="text-lg text-primary">NIM</h1>
-        <div className="float-end cursor-pointer bg-blue-900 text-white p-2 rounded-full shadow-lg hover:bg-blue-70 transition duration-300">
-          <FaBell size={20} />
-        </div>
-      </div>
+      <div className="md:hidden flex items-center w-full p-4 relative">
+  <FaBars
+    className="text-3xl cursor-pointer"
+    onClick={toggleSideNav}
+  />
+  <h1 className="absolute left-1/2 transform -translate-x-1/2 text-lg text-primary">
+    NIM
+  </h1>
+</div>
+
 
       {/* SideNav */}
       <div
@@ -84,13 +84,13 @@ const SideNav: React.FC = () => {
             {/* Dashboard */}
             <li
               className={`flex items-center p-3 my-2 cursor-pointer ${
-                isActive("/admin-dashboard")
+                isActive("/dashboard")
                   ? "text-white bg-primary border-r-4 border-primary"
                   : ""
               }`}
             >
               <HomeOutlined className="w-6 h-6" />
-              <Link href="/admin-dashboard">
+              <Link href="/dashboard">
                 <p className="ml-4">Dashboard</p>
               </Link>
             </li>
@@ -146,13 +146,13 @@ const SideNav: React.FC = () => {
             {/* Publication */}
             <li
               className={`flex p-3 my-2 cursor-pointer items-center ${
-                isActive("/admin-publication")
+                isActive("/publication")
                   ? "text-white bg-primary border-r-4 border-primary"
                   : ""
               }`}
             >
               <FaFileAlt className="w-6 h-6" />
-              <Link href="/admin-publication">
+              <Link href="/publication">
                 <p className="ml-4">Publication</p>
               </Link>
             </li>
@@ -184,13 +184,13 @@ const SideNav: React.FC = () => {
             {/* Profile */}
             <li
               className={`flex p-3 my-2 cursor-pointer items-center ${
-                isActive("/admin-profile")
+                isActive("/profile")
                   ? "text-white bg-primary border-r-4 border-primary"
                   : ""
               }`}
             >
               <FaRegUserCircle className="w-6 h-6" />
-              <Link href="/admin-profile">
+              <Link href="/profile">
                 <p className="ml-4">Profile</p>
               </Link>
             </li>

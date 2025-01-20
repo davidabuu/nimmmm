@@ -5,7 +5,7 @@ import News from "./News";
 
 const NewsDashboard = () => {
   return (
-    <div className="flex flex-col md:flex-row bg-[#F5F7FA]">
+    <div className="flex min-h-screen flex-col md:flex-row bg-[#F5F7FA]">
       <SideNav />
 
       <div className="flex flex-col w-full">

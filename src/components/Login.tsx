@@ -154,14 +154,14 @@ export default function LoginForm() {
 
           {/* Bottom Section for Signup */}
           <div className="mt-4 text-center">
-            <p className="text-sm text-gray-700">
+            <div className="text-sm text-gray-700">
               Don’t have an account?{' '}
               <Link href="/member-validate">
-                <p className="text-primary font-semibold hover:underline">
+                <h3 className="text-primary font-semibold hover:underline">
                   Create Account
-                </p>
+                </h3>
               </Link>
-            </p>
+            </div>
           </div>
         </div>
       </div>
