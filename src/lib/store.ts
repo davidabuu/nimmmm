@@ -6,15 +6,18 @@ import getOutstandingPayments from "../redux/payment/outstandingPayment";
 import fetchGradeCriteria from "../redux/grade/gradeCriteria";
 import changePassword from "../redux/auth/changePassword";
 import getPublication from "../redux/publications/getPublication";
-import getNews from "../redux/news/getPublication";
+import getNews from "../redux/news/getNews";
 import getEvents from "../redux/events/getEvents";
 import getSingleEvent from "../redux/events/getSingleEvent";
 import validateMember from "../redux/auth/memberValidation";
 import signUpUser from "../redux/auth/signUp";
-import  fetchProfile  from "../redux/auth/profile";
-import  initializePayment  from "../redux/payment/initializePayment";
-import requestOTP  from "../redux/auth/requestOtp";
-import  verifyOTP  from "../redux/auth/verifyOtp";
+import fetchProfile from "../redux/auth/profile";
+import initializePayment from "../redux/payment/initializePayment";
+import requestOTP from "../redux/auth/requestOtp";
+import verifyOTP from "../redux/auth/verifyOtp";
+import fetchNotifications from "../redux/notification/getNotification";
+import markNotificationAsRead from "../redux/notification/readNotifcation";
+import  getSingleNews  from "../redux/news/getSingleNews";
 
 export const makeStore = () => {
   return configureStore({
@@ -23,11 +26,14 @@ export const makeStore = () => {
       fetchAccountInfo,
       getHistoryPayments,
       validateMember,
+      getSingleNews,
       getNews,
+      markNotificationAsRead,
       verifyOTP,
       getSingleEvent,
       initializePayment,
       getEvents,
+      fetchNotifications,
       changePassword,
       signUpUser,
       requestOTP,

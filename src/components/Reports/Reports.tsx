@@ -1,8 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
-import { FaBell } from "react-icons/fa";
+
 import { FiFileText, FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { IoArrowBack } from "react-icons/io5";
 
 interface ReportItemProps {
   year: string;
@@ -35,15 +37,17 @@ export default function Reports() {
   };
 
   return (
-    <div className="mx-10">
+    <div className="">
       {/* Notification Icon */}
-      <div className="float-right hidden md:flex mr-3 mt-4 bg-blue-900 text-white p-2 rounded-full shadow-lg hover:bg-blue-700 transition duration-300">
-        <FaBell size={20} />
+      <div className="flex items-center gap-4 border-b border-gray-200 text-white p-4 mb-6">
+        <Link href="/history">
+          {" "}
+          <button className="bg-primary rounded-full p-2">
+            <IoArrowBack className="w-6 h-6" />
+          </button>
+        </Link>
+        <h1 className="text-xl text-primary font-medium">Reports</h1>
       </div>
-
-      <h2 className="text-xl mt-6 px-4 py-2 border-b font-semibold mb-4">
-        Reports
-      </h2>
       <div className="max-w-5xl mx-auto p-6">
         {/* Reports Grid */}
         <div className="grid md:grid-cols-2 gap-4 mb-8">

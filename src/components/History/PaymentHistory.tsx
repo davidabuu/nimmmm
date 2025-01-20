@@ -1,19 +1,15 @@
-// imports
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
 import "react-loading-skeleton/dist/skeleton.css";
-
 import { getHistoryPayments } from "@/src/redux/payment/historyPayment";
-import { fetchAccountInfo } from "@/src/redux/auth/fetchAccountInfo";
 import TableSkeleton from "../Dashboard/TableSkeleton";
 import { AppDispatch, RootState } from "@/src/lib/store";
-
-
 
 const PaymentHistory = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("latest");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   const dispatch = useDispatch<AppDispatch>();
   const { loading: accountLoading } = useSelector(
@@ -26,17 +22,31 @@ const PaymentHistory = () => {
   );
 
   useEffect(() => {
-    dispatch(fetchAccountInfo()).then((action) => {
-      if (fetchAccountInfo.fulfilled.match(action)) {
-        const membershipId = action.payload.data?.membershipId;
-        if (membershipId) {
-          dispatch(getHistoryPayments(membershipId));
-        }
-      }
-    });
+    dispatch(getHistoryPayments());
   }, [dispatch]);
 
-  
+  // Filtered and sorted data
+  const filteredData = Array.isArray(paymentData)
+    ? paymentData
+        .filter((item) =>
+          item.billName.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+        .sort((a, b) => {
+          if (sortBy === "latest") {
+            return new Date(b.date).getTime() - new Date(a.date).getTime();
+          } else {
+            return new Date(a.date).getTime() - new Date(b.date).getTime();
+          }
+        })
+    : [];
+
+  // Paginated data
+  const paginatedData = filteredData.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
 
   return (
     <div>
@@ -87,30 +97,67 @@ const PaymentHistory = () => {
               </tr>
             </thead>
             <tbody>
-              {paymentData?.payments?.map((item, index) => (
-                <tr key={index} className="border-b">
-                  <td className="p-4 whitespace-nowrap">{item.date}</td>
-                  <td className="p-4 whitespace-nowrap">{item.description}</td>
-                  <td className="p-4 whitespace-nowrap text-green-500">
-                    {item.amount}
-                  </td>
-                  <td className="p-4 whitespace-nowrap">
-                    <button className="bg-primary text-white px-4 py-2 hover:bg-blue-800 transition">
-                      View Details
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {paginatedData.map(
+                (
+                  item: { date: string; billName: string; amount: number },
+                  index
+                ) => (
+                  <tr key={index} className="border-b">
+                    <td className="p-4 whitespace-nowrap">
+                      {new Intl.DateTimeFormat("en-US", {
+                        year: "numeric",
+                        month: "short",
+                        day: "2-digit",
+                      }).format(new Date(item.date))}
+                    </td>
+                    <td className="p-4 whitespace-nowrap">{item.billName}</td>
+                    <td className="p-4 whitespace-nowrap text-green-500">
+                      ${item.amount}
+                    </td>
+                    <td className="p-4 whitespace-nowrap">
+                      <button className="bg-primary text-white px-4 py-2 hover:bg-blue-800 transition">
+                        Download Receipt
+                      </button>
+                    </td>
+                  </tr>
+                )
+              )}
             </tbody>
           </table>
         )}
       </div>
 
       {/* Pagination */}
-      <div className="flex justify-end mt-4">
-        <button className="px-4 py-2 text-gray-500 border">1</button>
-        <button className="px-4 py-2 text-gray-500 border">2</button>
-        <button className="px-4 py-2 text-gray-500 border">Next</button>
+      <div className="flex justify-end mt-4 space-x-2">
+        <button
+          disabled={currentPage === 1}
+          onClick={() => setCurrentPage((prev) => prev - 1)}
+          className={`px-4 py-2 border ${
+            currentPage === 1 ? "text-gray-300" : "text-gray-500"
+          }`}
+        >
+          Previous
+        </button>
+        {[...Array(totalPages)].map((_, index) => (
+          <button
+            key={index}
+            onClick={() => setCurrentPage(index + 1)}
+            className={`px-4 py-2 border ${
+              currentPage === index + 1 ? "bg-gray-200" : "text-gray-500"
+            }`}
+          >
+            {index + 1}
+          </button>
+        ))}
+        <button
+          disabled={currentPage === totalPages}
+          onClick={() => setCurrentPage((prev) => prev + 1)}
+          className={`px-4 py-2 border ${
+            currentPage === totalPages ? "text-gray-300" : "text-gray-500"
+          }`}
+        >
+          Next
+        </button>
       </div>
     </div>
   );
