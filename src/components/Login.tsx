@@ -43,7 +43,7 @@ export default function LoginForm() {
           localStorage.setItem("accessToken", accessToken);
         }
         message.success("Validation successful!");
-        router.push("/admin-dashboard");
+        router.push("/dashboard");
       } else if (loginUser.rejected.match(resultAction)) {
         const errorMessage = resultAction.payload as string;
         message.error(errorMessage);
