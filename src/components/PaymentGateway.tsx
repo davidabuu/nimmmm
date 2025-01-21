@@ -70,7 +70,7 @@ const PaymentGatewaySelection = () => {
   return (
     <div className="p-8 min-h-screen bg-[#F5F7FA]">
       <div className="mb-6">
-        <a href="/admin-dashboard">
+        <a href="/dashboard">
           <button className="flex items-center text-gray-600 hover:text-gray-800">
             <FaArrowLeft className="mr-2" />
             <span>Back</span>
