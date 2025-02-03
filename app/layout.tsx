@@ -31,14 +31,17 @@ export default function RootLayout({
       >
         <div className="relative mb-2 min-h-screen">
           {/* Top-right icons */}
-          {pathname !== "/" && ( // Conditionally render the icons
+          {pathname !== "/" && pathname !== '/members' && ( // Conditionally render the icons
             <div className="absolute top-3 right-4 z-50 flex items-center">
+              
+              <Link href="/members">
               <button
                 aria-label="Search"
                 className="p-2 rounded-full hover:bg-gray-100"
               >
                 <FiSearch className="text-xl" />
               </button>
+              </Link>
               <Link href="/notification">
                 <button
                   aria-label="Notifications"

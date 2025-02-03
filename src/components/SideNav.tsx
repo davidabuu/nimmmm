@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { HomeOutlined, CloseOutlined, LogoutOutlined } from "@ant-design/icons";
+import {  CloseOutlined, LogoutOutlined } from "@ant-design/icons";
 import { Modal, Button } from "antd"; // Import Modal from Ant Design
 import { FaBars, FaRegAddressCard } from "react-icons/fa"; // Hamburger icon
 import Image from "next/image";
@@ -11,6 +11,8 @@ import { RxCountdownTimer } from "react-icons/rx";
 import { FaFileAlt, FaRegUserCircle } from "react-icons/fa";
 import { SlBadge } from "react-icons/sl";
 import { FiBarChart, FiCalendar, FiSpeaker } from "react-icons/fi";
+import { LuLayoutDashboard } from "react-icons/lu";
+import { GiTeamUpgrade } from "react-icons/gi";
 
 const SideNav: React.FC = () => {
   const [showSideNav, setShowSideNav] = useState(false); // Control SideNav visibility
@@ -89,7 +91,7 @@ const SideNav: React.FC = () => {
                   : ""
               }`}
             >
-              <HomeOutlined className="w-6 h-6" />
+             <LuLayoutDashboard  className="w-6 h-6" />
               <Link href="/dashboard">
                 <p className="ml-4">Dashboard</p>
               </Link>
@@ -141,6 +143,18 @@ const SideNav: React.FC = () => {
               <FiCalendar className="w-6 h-6" />
               <Link href="/nim-events">
                 <p className="ml-4">NIM Events</p>
+              </Link>
+            </li>
+            <li
+              className={`flex p-3 my-2 cursor-pointer items-center ${
+                isActive("/nim-events")
+                  ? "text-white bg-primary border-r-4 border-primary"
+                  : ""
+              }`}
+            >
+             <GiTeamUpgrade  className="w-6 h-6" />
+              <Link href="/management-upgrade">
+                <p className="ml-4">Membership Upgrade</p>
               </Link>
             </li>
             {/* Publication */}

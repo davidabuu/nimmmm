@@ -6,11 +6,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/src/lib/store"; // Adjust to your store path
 import { FiClock, FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import Link from "next/link";
-import { useRouter } from "next/navigation"; // Import useRouter
+
 import { getNews } from "@/src/redux/news/getNews";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { IoArrowBack } from "react-icons/io5";
+import moment from "moment";
 
 interface NewsCardProps {
   id: string;
@@ -18,26 +19,25 @@ interface NewsCardProps {
   content: string;
   author: string;
   date: string;
-  time: string;
+  image: string;
 }
 
 function NewsCard({
-  id,
   title,
   author,
   date,
   content,
-  time,
+  image,
 }: NewsCardProps) {
-  const router = useRouter(); // For navigation
+ 
 
   return (
     <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
       {/* Image Container */}
       <div className="relative h-48 w-full">
         <Image
-          src="/ddd.png" // Default placeholder image
-          alt={title}
+          src={image} // Default placeholder image
+          alt='Logo.png'
           fill
           className="object-cover"
         />
@@ -47,23 +47,15 @@ function NewsCard({
       <div className="p-4">
         <h3 className="text-primary font-semibold text-base mb-2">{title}</h3>
         <p className="text-primary text-sm mb-2">By: {author}</p>
-        <p className="text-primary text-sm mb-2">{content}</p>
+        <p  dangerouslySetInnerHTML={{
+              __html: content
+            }} className="text-primary text-sm mb-2"></p>
 
         {/* Metadata */}
         <div className="flex items-center gap-2 text-sm text-gray-400 mb-4">
           <FiClock className="w-4 h-4" />
-          <span>{date}</span>
-          <span>•</span>
-          <span>{time}</span>
+          <span>{moment(date).format("MMMM DD, YYYY h:mm A")}</span>
         </div>
-
-        {/* Read More Button */}
-        <button
-          onClick={() => router.push(`/single-news?id=${id}`)} // Navigate with query params
-          className="w-full py-2 text-center text-white bg-primary hover:bg-blue-800 transition-colors rounded"
-        >
-          Read More
-        </button>
       </div>
     </div>
   );
@@ -112,8 +104,8 @@ export default function News() {
                 title={item.title}
                 content={item.content}
                 author={item.author}
-                date={new Date().toLocaleDateString()}
-                time={new Date().toLocaleTimeString()}
+                image={item.image}
+                date={item.createdAt}
               />
             ))}
           </div>

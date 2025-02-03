@@ -69,7 +69,7 @@ const AdminDashboardPage = () => {
           ) : (
             <>
               <h1 className="text-lg font-semibold">
-                {`${accountInfo?.member?.firstName || "N/A"} `}
+                {`${accountInfo?.member?.first_name || "N/A"} `}
               </h1>
 
               <p className="text-sm text-gray-500">
@@ -103,9 +103,9 @@ const AdminDashboardPage = () => {
   <Box
     imageSrc="/Frame3.png" // Path to the image
     title="Outstanding Fees" // Title of the box
-    description={accountLoading ? "" : "Outstanding Fees"} // Description
-    
-    loading={accountLoading} // Pass the loading state
+    description={paymentsLoading ? "Outstanding Fees" : String(outstandingPayments?.totalCreditYes) } // Description
+
+    loading={paymentsLoading} // Pass the loading state
   />
 </div>
 
@@ -138,7 +138,8 @@ const AdminDashboardPage = () => {
               </tr>
             </thead>
             <tbody>
-              {outstandingPayments?.map((payment) => (
+            {outstandingPayments?.entries?.map((payment) => (
+
                 <tr
                   key={payment.id}
                   className="border-b"
@@ -150,7 +151,7 @@ const AdminDashboardPage = () => {
                     />
                   </td>
                   <td className="p-4 whitespace-nowrap text-sm text-gray-500">
-                    {new Date(payment.createdAt).toLocaleDateString("en-GB")}
+                    {new Date(payment.date).toLocaleDateString("en-GB")}
                   </td>
                   <td className="p-4 whitespace-nowrap font-medium">
                     {payment.description || "N/A"}

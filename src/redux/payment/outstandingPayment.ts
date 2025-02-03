@@ -3,17 +3,30 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios, { AxiosError } from "axios";
 
 // Define the response type
-interface OutstandingPayment {
-  id: string;
-  amount: number;
-  createdAt: string;
-  status: string;
+interface PaymentEntry {
+  id: number;
+  payer_id: number;
   description: string;
+  amount: string;
+  debit: string;
+  paid: string;
+  credit: string;
+  fee: number;
+  date: string;
+  year: number;
+  updatedAt: string;
+}
+
+interface PaymentSummary {
+  entries: PaymentEntry[];
+  totalCreditNo: number;
+  totalCreditYes: number;
+  balance: number;
 }
 
 // Define the state type
 interface OutstandingPaymentsState {
-  data: OutstandingPayment[] | null;
+  data: PaymentSummary | null;
   loading: boolean;
   error: string | null;
 }
@@ -27,7 +40,7 @@ const initialState: OutstandingPaymentsState = {
 
 // Define the async thunk
 export const getOutstandingPayments = createAsyncThunk<
-  OutstandingPayment[], // Success return type (array of payments)
+  PaymentSummary, // Success return type (payment summary object)
   string, // Argument type (userId)
   { rejectValue: string } // Rejected value type
 >(
@@ -40,7 +53,7 @@ export const getOutstandingPayments = createAsyncThunk<
       }
 
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BASE_URL}payment/outstanding/${userId}`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}billing/user/payment-history/${userId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -48,7 +61,13 @@ export const getOutstandingPayments = createAsyncThunk<
         }
       );
 
-      return response.data; // Assuming the response is an array of payments
+      // Filter out only unpaid entries
+      const filteredData = {
+        ...response.data,
+        entries: response.data.entries.filter((entry: PaymentEntry) => entry.paid === "no"),
+      };
+
+      return filteredData; // Return only unpaid entries
     } catch (error) {
       if (error instanceof AxiosError) {
         return rejectWithValue(
@@ -74,7 +93,7 @@ const outstandingPaymentsSlice = createSlice({
       })
       .addCase(getOutstandingPayments.fulfilled, (state, action) => {
         state.loading = false;
-        state.data = action.payload; // Array of payments
+        state.data = action.payload; // Payment summary object
       })
       .addCase(getOutstandingPayments.rejected, (state, action) => {
         state.loading = false;

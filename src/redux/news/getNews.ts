@@ -9,7 +9,7 @@ interface News {
   dueDate: string;
   status: string;
   description: string;
-  date: string;
+  createdAt: string;
 }
 
 interface NewsResponse {

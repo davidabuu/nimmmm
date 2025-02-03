@@ -3,7 +3,7 @@ import axios from "axios";
 
 /// Define the structure of the account info
 export interface MemberInfo {
-  firstName: string;
+  first_name: string;
   lastName: string;
   email: string;
   chapter:string;

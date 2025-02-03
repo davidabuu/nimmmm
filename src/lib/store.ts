@@ -18,6 +18,7 @@ import verifyOTP from "../redux/auth/verifyOtp";
 import fetchNotifications from "../redux/notification/getNotification";
 import markNotificationAsRead from "../redux/notification/readNotifcation";
 import  getSingleNews  from "../redux/news/getSingleNews";
+import  searchMembers  from "../redux/members/getMembers";
 
 export const makeStore = () => {
   return configureStore({
@@ -26,6 +27,7 @@ export const makeStore = () => {
       fetchAccountInfo,
       getHistoryPayments,
       validateMember,
+      searchMembers,
       getSingleNews,
       getNews,
       markNotificationAsRead,
