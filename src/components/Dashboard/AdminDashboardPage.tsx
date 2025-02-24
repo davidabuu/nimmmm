@@ -9,6 +9,7 @@ import { fetchAccountInfo } from "@/src/redux/auth/fetchAccountInfo";
 import Box from "../Box";
 import { getOutstandingPayments } from "@/src/redux/payment/outstandingPayment";
 import TableSkeleton from "./TableSkeleton";
+import { storeEncryptedMember } from "@/src/service/utils";
 // Import TableSkeleton
 
 const AdminDashboardPage = () => {
@@ -24,12 +25,13 @@ const AdminDashboardPage = () => {
   const { data: outstandingPayments, loading: paymentsLoading } = useSelector(
     (state: RootState) => state.getOutstandingPayments
   );
-  console.log(outstandingPayments);
   // Fetch accountInfo and outstanding payments data on component mount
   useEffect(() => {
     dispatch(fetchAccountInfo()).then((action) => {
       if (fetchAccountInfo.fulfilled.match(action)) {
         const membershipId = action.payload.data?.id;
+        const member = action.payload.data?.member.grade;
+      storeEncryptedMember(member);
         if (membershipId) {
           dispatch(getOutstandingPayments(membershipId));
         }
@@ -94,7 +96,7 @@ const AdminDashboardPage = () => {
   <Box
     imageSrc="/Frame2.png" // Path to the image
     title="Chapter" // Title of the box
-    description={accountLoading ? "" : accountInfo?.member?.chapter || "N/A"} // Description
+    description={accountLoading ? "" : accountInfo?.member?.chapter.state || "N/A"} // Description
    
     loading={accountLoading} // Pass the loading state
   />
@@ -103,9 +105,16 @@ const AdminDashboardPage = () => {
   <Box
     imageSrc="/Frame3.png" // Path to the image
     title="Outstanding Fees" // Title of the box
-    description={paymentsLoading ? "Outstanding Fees" : String(outstandingPayments?.totalCreditYes) } // Description
+    description={
+      accountLoading || paymentsLoading
+        ? "Outstanding Fees"
+        : outstandingPayments?.totalCreditNo
+          ? `₦${new Intl.NumberFormat().format(outstandingPayments.totalCreditNo)}`
+          : "₦0"
+    }
+    
 
-    loading={paymentsLoading} // Pass the loading state
+    loading={accountLoading || paymentsLoading} // Pass the loading state
   />
 </div>
 

@@ -147,7 +147,7 @@ const SideNav: React.FC = () => {
             </li>
             <li
               className={`flex p-3 my-2 cursor-pointer items-center ${
-                isActive("/nim-events")
+                isActive("/management-upgrade")
                   ? "text-white bg-primary border-r-4 border-primary"
                   : ""
               }`}

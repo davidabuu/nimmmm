@@ -1,3 +1,4 @@
+
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
@@ -6,7 +7,9 @@ export interface MemberInfo {
   first_name: string;
   lastName: string;
   email: string;
-  chapter:string;
+  chapter:{
+    state:string;
+  };
   grade:string;
   key: string; // Additional fields, if any
 }
@@ -40,6 +43,8 @@ export const fetchAccountInfo = createAsyncThunk(
       );
       localStorage.setItem("accountInfo", response.data.data.email);
       localStorage.setItem("userId", response.data.data.id);
+      
+      // Store encrypted grade
       return response.data; // Assuming the API returns account information in the response body
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {

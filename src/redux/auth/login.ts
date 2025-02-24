@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
@@ -31,6 +32,7 @@ export const loginUser = createAsyncThunk(
         credentials,
         { headers: { "Content-Type": "application/json" } }
       );
+      
       return response.data; // Assuming the response contains user data
     } catch (error: any) {
       return rejectWithValue(

@@ -19,12 +19,14 @@ import fetchNotifications from "../redux/notification/getNotification";
 import markNotificationAsRead from "../redux/notification/readNotifcation";
 import  getSingleNews  from "../redux/news/getSingleNews";
 import  searchMembers  from "../redux/members/getMembers";
+import  getGradeName  from "../redux/nimUpgrade/getGrade";
 
 export const makeStore = () => {
   return configureStore({
     reducer: {
       loginUser,
       fetchAccountInfo,
+      getGradeName,
       getHistoryPayments,
       validateMember,
       searchMembers,

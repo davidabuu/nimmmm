@@ -3,10 +3,10 @@ import axios from "axios";
 interface PaymentResponse {
   success: boolean;
   message: string;
-  data: {
+ 
     authorization_url: string;
     transactionId: string;
-  };
+  
 }
 
 interface PaymentState {
@@ -23,6 +23,8 @@ const initialState: PaymentState = {
 interface InitializePaymentPayload {
   description: string;
   amount: number;
+  callbackUrl: string;
+  currency: string;
   provider: string;
   email:string;
 }
@@ -38,10 +40,10 @@ export const initializePayment = createAsyncThunk<
       throw new Error("No access token found. Please log in again.");
     }
 
-    const { description, amount, provider, email } = payload; // Destructure payload
+    const { description, amount, provider, email, currency, callbackUrl } = payload; // Destructure payload
     const response = await axios.post<PaymentResponse>(
       `${process.env.NEXT_PUBLIC_BASE_URL}payment/initialize?provider=${provider}`,
-      {email, description, amount },
+      {email, description, amount, currency, callbackUrl},
       {
         headers: {
           Authorization: `Bearer ${token}`,
