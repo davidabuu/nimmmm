@@ -1,8 +1,8 @@
 import CryptoJS from "crypto-js";
 
-const SECRET_KEY = "53636ebsdjddjd8393"; // Use a secure key
+const SECRET_KEY = "58584jejdjssjkkkz"; // Ensure this is securely stored
 
-export const storeEncryptedMember = (member:string) => {
+export const storeEncryptedMember = (member: { grade: string; id: string }) => {
   if (member) {
     const encryptedData = CryptoJS.AES.encrypt(
       JSON.stringify(member),
@@ -15,8 +15,14 @@ export const storeEncryptedMember = (member:string) => {
 export const getDecryptedMember = () => {
   const encryptedData = localStorage.getItem("member");
   if (encryptedData) {
-    const bytes = CryptoJS.AES.decrypt(encryptedData, SECRET_KEY);
-    return JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+    try {
+      const bytes = CryptoJS.AES.decrypt(encryptedData, SECRET_KEY);
+      const decryptedData = bytes.toString(CryptoJS.enc.Utf8);
+      return decryptedData ? JSON.parse(decryptedData) : null;
+    } catch (error) {
+      console.error("Decryption failed:", error);
+      return null;
+    }
   }
   return null;
 };

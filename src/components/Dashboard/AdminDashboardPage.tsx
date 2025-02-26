@@ -14,7 +14,6 @@ import { storeEncryptedMember } from "@/src/service/utils";
 
 const AdminDashboardPage = () => {
   const dispatch = useDispatch<AppDispatch>();
-  
 
   // Access accountInfo and loading state from Redux
   const { loading: accountLoading, accountInfo } = useSelector(
@@ -30,8 +29,9 @@ const AdminDashboardPage = () => {
     dispatch(fetchAccountInfo()).then((action) => {
       if (fetchAccountInfo.fulfilled.match(action)) {
         const membershipId = action.payload.data?.id;
-        const member = action.payload.data?.member.grade;
-      storeEncryptedMember(member);
+        const { grade, id } = action.payload.data?.member || {};
+        storeEncryptedMember({ grade, id });
+
         if (membershipId) {
           dispatch(getOutstandingPayments(membershipId));
         }
@@ -58,15 +58,8 @@ const AdminDashboardPage = () => {
         <div className="text-secondary ml-2">
           {accountLoading ? (
             <>
-              <Skeleton
-                width={120}
-                height={20}
-              />
-              <Skeleton
-                width={80}
-                height={15}
-                className="mt-1"
-            />
+              <Skeleton width={120} height={20} />
+              <Skeleton width={80} height={15} className="mt-1" />
             </>
           ) : (
             <>
@@ -83,41 +76,42 @@ const AdminDashboardPage = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
-  {/* Box for Membership Grade */}
-  <Box
-    imageSrc="/Frame1.png" // Path to the image
-    title="Grade" // Title of the box
-    description={accountLoading ? "" : accountInfo?.member?.grade || "N/A"} // Description
-   
-    loading={accountLoading} // Pass the loading state
-  />
+        {/* Box for Membership Grade */}
+        <Box
+          imageSrc="/Frame1.png" // Path to the image
+          title="Grade" // Title of the box
+          description={
+            accountLoading ? "" : accountInfo?.member?.grade || "N/A"
+          } // Description
+          loading={accountLoading} // Pass the loading state
+        />
 
-  {/* Box for Membership Chapter */}
-  <Box
-    imageSrc="/Frame2.png" // Path to the image
-    title="Chapter" // Title of the box
-    description={accountLoading ? "" : accountInfo?.member?.chapter.state || "N/A"} // Description
-   
-    loading={accountLoading} // Pass the loading state
-  />
+        {/* Box for Membership Chapter */}
+        <Box
+          imageSrc="/Frame2.png" // Path to the image
+          title="Chapter" // Title of the box
+          description={
+            accountLoading ? "" : accountInfo?.member?.chapter.state || "N/A"
+          } // Description
+          loading={accountLoading} // Pass the loading state
+        />
 
-  {/* Box for Outstanding Fees */}
-  <Box
-    imageSrc="/Frame3.png" // Path to the image
-    title="Outstanding Fees" // Title of the box
-    description={
-      accountLoading || paymentsLoading
-        ? "Outstanding Fees"
-        : outstandingPayments?.totalCreditNo
-          ? `₦${new Intl.NumberFormat().format(outstandingPayments.totalCreditNo)}`
-          : "₦0"
-    }
-    
-
-    loading={accountLoading || paymentsLoading} // Pass the loading state
-  />
-</div>
-
+        {/* Box for Outstanding Fees */}
+        <Box
+          imageSrc="/Frame3.png" // Path to the image
+          title="Outstanding Fees" // Title of the box
+          description={
+            accountLoading || paymentsLoading
+              ? "Outstanding Fees"
+              : outstandingPayments?.totalCreditNo
+              ? `₦${new Intl.NumberFormat().format(
+                  outstandingPayments.totalCreditNo
+                )}`
+              : "₦0"
+          }
+          loading={accountLoading || paymentsLoading} // Pass the loading state
+        />
+      </div>
 
       {/* Outstanding Payments Section */}
       <div className="overflow-x-auto mt-6 bg-white">
@@ -125,10 +119,7 @@ const AdminDashboardPage = () => {
           Outstanding Payment
         </h1>
         {paymentsLoading || accountLoading ? (
-          <TableSkeleton
-            rows={4}
-            cols={5}
-          /> // Use TableSkeleton while loading
+          <TableSkeleton rows={4} cols={5} /> // Use TableSkeleton while loading
         ) : (
           <table className="w-full table-auto border-collapse">
             <thead>
@@ -147,12 +138,8 @@ const AdminDashboardPage = () => {
               </tr>
             </thead>
             <tbody>
-            {outstandingPayments?.entries?.map((payment) => (
-
-                <tr
-                  key={payment.id}
-                  className="border-b"
-                >
+              {outstandingPayments?.entries?.map((payment) => (
+                <tr key={payment.id} className="border-b">
                   <td className="p-4 whitespace-nowrap">
                     <input
                       type="checkbox"

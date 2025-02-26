@@ -2,7 +2,6 @@ import React from "react";
 import {
   FaFileAlt,
   FaClipboardCheck,
-  FaInfoCircle,
   FaCheckCircle,
   FaCreditCard,
 } from "react-icons/fa";
@@ -10,8 +9,8 @@ import {
 // Define the steps with their respective types
 const steps: { id: number; label: string; icon: React.ElementType }[] = [
   { id: 1, label: "Criteria/Instructions", icon: FaFileAlt },
-  { id: 2, label: "Upgrade Form", icon: FaClipboardCheck },
-  { id: 3, label: "Additional Information", icon: FaInfoCircle },
+  { id: 2, label: "Eligibility Check", icon: FaClipboardCheck },
+ 
   { id: 4, label: "Confirmation", icon: FaCheckCircle },
   { id: 5, label: "Payment", icon: FaCreditCard },
 ];

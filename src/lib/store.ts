@@ -20,6 +20,7 @@ import markNotificationAsRead from "../redux/notification/readNotifcation";
 import  getSingleNews  from "../redux/news/getSingleNews";
 import  searchMembers  from "../redux/members/getMembers";
 import  getGradeName  from "../redux/nimUpgrade/getGrade";
+import  upgradeUserGrade  from "../redux/nimUpgrade/upgradeSlice";
 
 export const makeStore = () => {
   return configureStore({
@@ -35,6 +36,7 @@ export const makeStore = () => {
       markNotificationAsRead,
       verifyOTP,
       getSingleEvent,
+      upgradeUserGrade,
       initializePayment,
       getEvents,
       fetchNotifications,

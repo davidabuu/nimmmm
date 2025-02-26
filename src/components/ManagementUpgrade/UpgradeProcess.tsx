@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import {
   FaFileAlt,
   FaClipboardCheck,
-  FaInfoCircle,
+
   FaCheckCircle,
   FaCreditCard,
 } from "react-icons/fa";
@@ -10,19 +10,17 @@ import { useDispatch, useSelector } from "react-redux";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import CriteriaInstructions from "./CriteriaInstructions";
-import UpgradeForm from "./UpgradeForm";
-import InstitutionsAdded from "./InstitutionsAdded";
 import Confirmation from "./Confirmation";
 import { AppDispatch, RootState } from "@/src/lib/store";
 import { getDecryptedMember } from "@/src/service/utils";
 import { getGradeName } from "@/src/redux/nimUpgrade/getGrade"; 
+import UpgradeGrade from "./UpgradeGrade";
 
 const steps = [
   { id: 1, label: "Criteria/Instructions", icon: FaFileAlt },
   { id: 2, label: "Upgrade Form", icon: FaClipboardCheck },
-  { id: 3, label: "Additional Information", icon: FaInfoCircle },
-  { id: 4, label: "Confirmation", icon: FaCheckCircle },
-  { id: 5, label: "Payment", icon: FaCreditCard },
+  { id: 3, label: "Confirmation", icon: FaCheckCircle },
+  { id: 4, label: "Payment", icon: FaCreditCard },
 ];
 
 export default function UpgradeProcess() {
@@ -37,7 +35,7 @@ export default function UpgradeProcess() {
   useEffect(() => {
     const member = getDecryptedMember();
     if (member) {
-      dispatch(getGradeName(member));
+      dispatch(getGradeName(member.grade));
     }
     setTimeout(() => setLoading(false), 1000);
   }, [dispatch]);
@@ -47,12 +45,11 @@ export default function UpgradeProcess() {
       case 1:
         return <CriteriaInstructions />;
       case 2:
-        return <UpgradeForm />;
+        return <UpgradeGrade/>;
       case 3:
-        return <InstitutionsAdded />;
-      case 4:
         return <Confirmation />;
-      case 5:
+     
+      case 4:
         return <div className="p-4 bg-white">Payment Step</div>;
       default:
         return <div className="p-4 bg-white">Invalid Step</div>;
@@ -62,14 +59,7 @@ export default function UpgradeProcess() {
   return (
     <div className="p-4 bg-white min-h-screen">
       {/* Top Previous Button */}
-      {activeStep > 1 && (
-        <button
-          className="mb-4 bg-gray-400 text-white px-6 py-2 rounded-md shadow hover:bg-gray-600 transition duration-300"
-          onClick={() => setActiveStep(activeStep - 1)}
-        >
-          Previous
-        </button>
-      )}
+      
 
       {/* Stepper */}
       <div className="flex flex-wrap md:flex-nowrap items-center bg-white p-4 rounded-md shadow-md whitespace-nowrap mb-6 overflow-x-auto">
