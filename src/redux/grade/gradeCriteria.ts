@@ -34,7 +34,7 @@ export const fetchGradeCriteria = createAsyncThunk<
     }
 
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_BASE_URL}grade/criteria`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}grade/criteria/all`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

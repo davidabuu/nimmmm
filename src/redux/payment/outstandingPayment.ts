@@ -9,7 +9,7 @@ interface PaymentEntry {
   description: string;
   amount: string;
   debit: string;
-  paid: string;
+  paid: boolean;
   credit: string;
   fee: number;
   date: string;
@@ -19,7 +19,7 @@ interface PaymentEntry {
 
 interface PaymentSummary {
   entries: PaymentEntry[];
-  totalCreditNo: number;
+  totalUnpaid: number;
   totalCreditYes: number;
   balance: number;
 }
@@ -61,12 +61,22 @@ export const getOutstandingPayments = createAsyncThunk<
         }
       );
 
-      // Filter out only unpaid entries
-      const filteredData = {
-        ...response.data,
-        entries: response.data.entries.filter((entry: PaymentEntry) => entry.paid === "no"),
-      };
+  const filteredEntries = response.data.entries.filter(
+  (entry: PaymentEntry) => entry.paid === false
+);
 
+// Calculate total unpaid fees
+const totalUnpaid = filteredEntries.reduce(
+  (sum: number, entry: { amount: string; }) => sum + parseFloat(entry.amount),
+  0
+);
+
+// Return filtered data with total unpaid amount
+const filteredData = {
+  ...response.data,
+  entries: filteredEntries,
+  totalUnpaid,
+}
       return filteredData; // Return only unpaid entries
     } catch (error) {
       if (error instanceof AxiosError) {

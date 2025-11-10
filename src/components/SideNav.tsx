@@ -84,6 +84,7 @@ const SideNav: React.FC = () => {
         <div className="flex-1 text-secondary mt-10">
           <ul className="flex flex-col ml-8">
             {/* Dashboard */}
+            <Link href="/dashboard">
             <li
               className={`flex items-center p-3 my-2 cursor-pointer ${
                 isActive("/dashboard")
@@ -92,11 +93,13 @@ const SideNav: React.FC = () => {
               }`}
             >
              <LuLayoutDashboard  className="w-6 h-6" />
-              <Link href="/dashboard">
+              
                 <p className="ml-4">Dashboard</p>
-              </Link>
+            
             </li>
+              </Link>
             {/* History */}
+    <Link href="/history">
             <li
               className={`flex p-3 my-2 cursor-pointer items-center ${
                 isActive("/history")
@@ -105,10 +108,12 @@ const SideNav: React.FC = () => {
               }`}
             >
               <RxCountdownTimer className="w-6 h-6" />
-              <Link href="/history">
+              
                 <p className="ml-4">History</p>
-              </Link>
+             
             </li>
+             </Link>
+              <Link href="/reports">
             <li
               className={`flex p-3 my-2 cursor-pointer items-center ${
                 isActive("/reports")
@@ -117,10 +122,12 @@ const SideNav: React.FC = () => {
               }`}
             >
               <FiBarChart className="w-6 h-6" />
-              <Link href="/reports">
+             
                 <p className="ml-4">Reports</p>
-              </Link>
+             
             </li>
+             </Link>
+               <Link href="/news">
             <li
               className={`flex p-3 my-2 cursor-pointer items-center ${
                 isActive("/news")
@@ -129,10 +136,12 @@ const SideNav: React.FC = () => {
               }`}
             >
               <FiSpeaker className="w-6 h-6" />
-              <Link href="/news">
+            
                 <p className="ml-4">NIM News</p>
-              </Link>
+            
             </li>
+              </Link>
+               <Link href="/nim-events">
             <li
               className={`flex p-3 my-2 cursor-pointer items-center ${
                 isActive("/nim-events")
@@ -141,10 +150,12 @@ const SideNav: React.FC = () => {
               }`}
             >
               <FiCalendar className="w-6 h-6" />
-              <Link href="/nim-events">
+             
                 <p className="ml-4">NIM Events</p>
-              </Link>
+            
             </li>
+              </Link>
+                 <Link href="/management-upgrade">
             <li
               className={`flex p-3 my-2 cursor-pointer items-center ${
                 isActive("/management-upgrade")
@@ -153,11 +164,12 @@ const SideNav: React.FC = () => {
               }`}
             >
              <GiTeamUpgrade  className="w-6 h-6" />
-              <Link href="/management-upgrade">
+           
                 <p className="ml-4">Membership Upgrade</p>
-              </Link>
+            
             </li>
-            {/* Publication */}
+              </Link>
+           <Link href="/publication">
             <li
               className={`flex p-3 my-2 cursor-pointer items-center ${
                 isActive("/publication")
@@ -166,11 +178,12 @@ const SideNav: React.FC = () => {
               }`}
             >
               <FaFileAlt className="w-6 h-6" />
-              <Link href="/publication">
+             
                 <p className="ml-4">Publication</p>
-              </Link>
+              
             </li>
-            {/* Apply for License */}
+            </Link>
+              <Link href="/management-license">
             <li
               className={`flex p-3 my-2 cursor-pointer items-center ${
                 isActive("/management-license")
@@ -179,10 +192,12 @@ const SideNav: React.FC = () => {
               }`}
             >
               <SlBadge className="w-6 h-6" />
-              <Link href="/management-license">
+            
                 <p className="ml-4">Mangement License</p>
-              </Link>
+            
             </li>
+              </Link>
+                   <Link href="/nim-verification">
             <li
               className={`flex p-3 my-2 cursor-pointer items-center ${
                 isActive("/nim-verification")
@@ -191,11 +206,12 @@ const SideNav: React.FC = () => {
               }`}
             >
               <FaRegAddressCard className="w-6 h-6" />
-              <Link href="/nim-verification">
+         
                 <p className="ml-4">NIM Verification</p>
-              </Link>
+           
             </li>
-            {/* Profile */}
+               </Link>
+           <Link href="/profile">
             <li
               className={`flex p-3 my-2 cursor-pointer items-center ${
                 isActive("/profile")
@@ -204,10 +220,11 @@ const SideNav: React.FC = () => {
               }`}
             >
               <FaRegUserCircle className="w-6 h-6" />
-              <Link href="/profile">
+              
                 <p className="ml-4">Profile</p>
-              </Link>
+      
             </li>
+            </Link>
             {/* Logout */}
             <li
               className="flex p-3 my-2 cursor-pointer items-center text-white bg-black"

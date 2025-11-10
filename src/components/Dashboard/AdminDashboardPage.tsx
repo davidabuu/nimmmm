@@ -24,6 +24,7 @@ const AdminDashboardPage = () => {
   const { data: outstandingPayments, loading: paymentsLoading } = useSelector(
     (state: RootState) => state.getOutstandingPayments
   );
+  console.log(outstandingPayments)
   // Fetch accountInfo and outstanding payments data on component mount
   useEffect(() => {
     dispatch(fetchAccountInfo()).then((action) => {
@@ -103,9 +104,9 @@ const AdminDashboardPage = () => {
           description={
             accountLoading || paymentsLoading
               ? "Outstanding Fees"
-              : outstandingPayments?.totalCreditNo
+              : outstandingPayments?.totalUnpaid
               ? `₦${new Intl.NumberFormat().format(
-                  outstandingPayments.totalCreditNo
+                  outstandingPayments.totalUnpaid
                 )}`
               : "₦0"
           }
