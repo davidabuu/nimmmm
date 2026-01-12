@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import { FiArrowRight, FiTag } from "react-icons/fi";
 import { useEffect } from "react";
@@ -15,8 +17,16 @@ export default function EventCardGrid() {
     dispatch(getEvents(""));
   }, [dispatch]);
 
+  if (!loading && (!data || data.length === 0)) {
+    return (
+      <div className="text-center text-gray-500 mt-10">
+        <p>No events available.</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 ">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
       {loading
         ? Array.from({ length: 6 }).map((_, index) => (
             <div
@@ -29,47 +39,25 @@ export default function EventCardGrid() {
 
               <div className="p-4 flex flex-col justify-between flex-grow">
                 <div className="space-y-2">
-                  <Skeleton
-                    height={24}
-                    width="80%"
-                  />
+                  <Skeleton height={24} width="80%" />
                   <div className="space-y-1 text-sm text-gray-600">
-                    <Skeleton
-                      height={16}
-                      width="60%"
-                    />
-                    <Skeleton
-                      height={16}
-                      width="50%"
-                    />
-                    <Skeleton
-                      height={16}
-                      width="70%"
-                    />
+                    <Skeleton height={16} width="60%" />
+                    <Skeleton height={16} width="50%" />
+                    <Skeleton height={16} width="70%" />
                   </div>
                   <div className="flex items-center gap-1">
-                    <Skeleton
-                      circle
-                      height={20}
-                      width={20}
-                    />
-                    <Skeleton
-                      height={16}
-                      width="40px"
-                    />
+                    <Skeleton circle height={20} width={20} />
+                    <Skeleton height={16} width="40px" />
                   </div>
                 </div>
 
                 <div className="mt-4">
-                  <Skeleton
-                    height={40}
-                    width="100%"
-                  />
+                  <Skeleton height={40} width="100%" />
                 </div>
               </div>
             </div>
           ))
-        : data?.map((event) => (
+        : data && data.map((event) => (
             <div
               key={event.id}
               className="max-w-full border border-gray-200 rounded-lg shadow-sm overflow-hidden"
@@ -77,7 +65,7 @@ export default function EventCardGrid() {
               <div className="relative w-full h-48">
                 <Image
                   src={"/ddd.png"}
-                  alt={"Hll"}
+                  alt={event.name}
                   fill
                   className="object-cover"
                   priority
@@ -92,13 +80,12 @@ export default function EventCardGrid() {
                     <p>Mode: {event.mode}</p>
                     <p>Time: {event.time}</p>
                   </div>
-                  {event.isFree ||
-                    (!event.isFree && (
-                      <div className="flex items-center text-red-500 gap-1">
-                        <FiTag className="h-4 w-4" />
-                        <span>Free</span>
-                      </div>
-                    ))}
+                  {event.isFree && (
+                    <div className="flex items-center text-red-500 gap-1">
+                      <FiTag className="h-4 w-4" />
+                      <span>Free</span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="mt-4">

@@ -35,12 +35,13 @@ function NewsCard({
     <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
       {/* Image Container */}
       <div className="relative h-48 w-full">
-        <Image
-          src={image} // Default placeholder image
-          alt='Logo.png'
-          fill
-          className="object-cover"
-        />
+       <Image
+  src={image}
+  alt="News image"
+  fill
+  className="object-cover"
+/>
+
       </div>
 
       {/* Content */}
@@ -83,8 +84,8 @@ export default function News() {
   return (
     <div className="">
       <div className="flex items-center gap-4 border-b border-gray-200 text-white p-4 mb-6">
-        <Link href="/reports">
-          <button className="bg-primary rounded-full p-2">
+        <Link href="/reports cursor-pointer">
+          <button className="bg-primary  rounded-full p-2">
             <IoArrowBack className="w-6 h-6" />
           </button>
         </Link>

@@ -10,6 +10,7 @@ interface SingleNews {
   status: string;
  content: string;
  title:string;
+ image: string;
  createdAt:string;
   date: string;
 }

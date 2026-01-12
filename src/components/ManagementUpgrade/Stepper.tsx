@@ -10,7 +10,7 @@ import {
 const steps: { id: number; label: string; icon: React.ElementType }[] = [
   { id: 1, label: "Criteria/Instructions", icon: FaFileAlt },
   { id: 2, label: "Eligibility Check", icon: FaClipboardCheck },
- 
+ { id: 3, label: "Additional Information", icon: FaClipboardCheck },
   { id: 4, label: "Confirmation", icon: FaCheckCircle },
   { id: 5, label: "Payment", icon: FaCreditCard },
 ];
@@ -36,8 +36,7 @@ export default function Stepper({ activeStep, setActiveStep }: StepperProps) {
               className={`text-xl ${
                 activeStep === step.id
                   ? "text-blue-500"
-                  : activeStep > step.id
-                  ? "text-green-500"
+                 
                   : "text-gray-400"
               }`}
             />
@@ -56,9 +55,7 @@ export default function Stepper({ activeStep, setActiveStep }: StepperProps) {
             {/* Render the connector line */}
             {index < steps.length - 1 && (
               <div
-                className={`hidden md:block flex-1 h-0.5 ${
-                  activeStep > step.id ? "bg-green-500" : "bg-gray-300"
-                }`}
+                className={`hidden md:block flex-1 h-0.5`}
               />
             )}
           </div>

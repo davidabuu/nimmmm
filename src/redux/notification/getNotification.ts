@@ -3,7 +3,7 @@ import axios from "axios";
 
 // Define the initial state
 interface NotificationsState {
-  notifications: { id: string; message: string; read: boolean }[];
+  notifications: { id: string; message: string; isRead: boolean }[];
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
 }

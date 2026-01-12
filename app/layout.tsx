@@ -1,16 +1,18 @@
 "use client";
+
 import localFont from "next/font/local";
 import "./globals.css";
 import StoreProvider from "@/src/StoreProvider";
-import { FiSearch, FiBell } from "react-icons/fi"; // Import icons from react-icons
-import Link from "next/link";
+
 import { usePathname } from "next/navigation";
+import TopActions from "@/src/components/TopActions";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
   weight: "100 900",
 });
+
 const geistMono = localFont({
   src: "./fonts/GeistMonoVF.woff",
   variable: "--font-geist-mono",
@@ -19,43 +21,37 @@ const geistMono = localFont({
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
-  const pathname = usePathname(); // Get the current pathname
+}) {
+  const pathname = usePathname();
+  const showTopIcons = pathname !== "/" && pathname !== "/members";
 
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50`}
       >
-        <div className="relative mb-2 min-h-screen">
-          {/* Top-right icons */}
-          {pathname !== "/" && pathname !== '/members' && ( // Conditionally render the icons
-            <div className="absolute top-3 right-4 z-50 flex items-center">
-              
-              <Link href="/members">
-              <button
-                aria-label="Search"
-                className="p-2 rounded-full hover:bg-gray-100"
-              >
-                <FiSearch className="text-xl" />
-              </button>
-              </Link>
-              <Link href="/notification">
-                <button
-                  aria-label="Notifications"
-                  className="p-2 rounded-full hover:bg-gray-100"
-                >
-                  <FiBell className="text-xl" />
-                </button>
-              </Link>
-            </div>
-          )}
+        <StoreProvider>
+          <div className="min-h-screen">
 
-          {/* Main content */}
-          <StoreProvider>{children}</StoreProvider>
-        </div>
+            {/* Top bar (NOT sticky) */}
+            {showTopIcons && (
+              <header className="w-full absolute  pt-1">
+               
+                  <div className="flex items-center gap-2">
+
+                    <TopActions />
+                  </div>
+              
+              </header>
+            )}
+
+            {/* Page content */}
+            <main className="px-2 sm:px-4">{children}</main>
+
+          </div>
+        </StoreProvider>
       </body>
     </html>
   );

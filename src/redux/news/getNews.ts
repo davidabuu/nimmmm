@@ -13,6 +13,7 @@ interface News {
 }
 
 interface NewsResponse {
+  length: number;
   payments: News[];
 }
 

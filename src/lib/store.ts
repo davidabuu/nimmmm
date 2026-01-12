@@ -21,6 +21,7 @@ import  getSingleNews  from "../redux/news/getSingleNews";
 import  searchMembers  from "../redux/members/getMembers";
 import  getGradeName  from "../redux/nimUpgrade/getGrade";
 import  upgradeUserGrade  from "../redux/nimUpgrade/upgradeSlice";
+import setMembershipForm from "../redux/nimUpgrade/membershipSlice";
 
 export const makeStore = () => {
   return configureStore({
@@ -29,6 +30,7 @@ export const makeStore = () => {
       fetchAccountInfo,
       getGradeName,
       getHistoryPayments,
+      setMembershipForm,
       validateMember,
       searchMembers,
       getSingleNews,

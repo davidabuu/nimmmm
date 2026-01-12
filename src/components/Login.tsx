@@ -32,25 +32,34 @@ export default function LoginForm() {
       return;
     }
 
-    try {
-      const resultAction = await dispatch(
-        loginUser({ email: membershipNumber, password })
-      );
+   try {
+  const resultAction = await dispatch(
+    loginUser({ email: membershipNumber, password })
+  );
 
-      if (loginUser.fulfilled.match(resultAction)) {
-        const accessToken = resultAction.payload?.accessToken; // Assuming accessToken is in the payload
+  if (loginUser.fulfilled.match(resultAction)) {
+    const accessToken = resultAction.payload?.accessToken;
+    const userId = resultAction.payload?.user?.id;
+
     if (accessToken) {
-          localStorage.setItem("accessToken", accessToken);
-        }
-        message.success("Validation successful!");
-        router.push("/dashboard");
-      } else if (loginUser.rejected.match(resultAction)) {
-        const errorMessage = resultAction.payload as string;
-        message.error(errorMessage);
-      }
-    } catch (error) {
-      message.error("An unexpected error occurred. Please try again.");
+      localStorage.setItem("accessToken", accessToken);
     }
+
+    if (userId) {
+      localStorage.setItem("userId", userId);
+    }
+
+    message.success("Validation successful!");
+    router.push("/dashboard");
+  } 
+  else if (loginUser.rejected.match(resultAction)) {
+    const errorMessage = resultAction.payload as string;
+    message.error(errorMessage);
+  }
+} catch (error) {
+  message.error("An unexpected error occurred. Please try again.");
+}
+
   };
 
   return (
@@ -65,7 +74,7 @@ export default function LoginForm() {
 
       {/* Right side for the login form */}
       <div className="flex justify-center w-full md:w-1/2 p-8">
-        <div className="max-w-md w-full bg-white">
+        <div className="max-w-md w-full ">
           <div className="mb-6">
             <Image
               src="/nnpc.png" // Replace with your logo path

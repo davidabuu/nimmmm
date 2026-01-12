@@ -1,8 +1,8 @@
 // imports
 import React, { useEffect } from "react";
-import Image from "next/image"; // Using Image from Next.js for optimization
+import Image from "next/image";
 import Skeleton from "react-loading-skeleton";
-import "react-loading-skeleton/dist/skeleton.css"; // Import Skeleton styles
+import "react-loading-skeleton/dist/skeleton.css";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/src/lib/store";
 import { fetchAccountInfo } from "@/src/redux/auth/fetchAccountInfo";
@@ -10,28 +10,57 @@ import Box from "../Box";
 import { getOutstandingPayments } from "@/src/redux/payment/outstandingPayment";
 import TableSkeleton from "./TableSkeleton";
 import { storeEncryptedMember } from "@/src/service/utils";
-// Import TableSkeleton
+
+const formatDate = (date?: string | null): string => {
+  if (!date) return "N/A";
+  return new Date(date).toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+};
+
+const formatAmount = (amount: string | number): string => {
+  return `₦${Number(amount).toLocaleString("en-NG")}`;
+};
+
+
+interface PaymentEntry {
+  id: number;
+  description: string;
+  amount: string | number;
+  paid: boolean;
+  paidAt?: string | null;
+  createdAt?: string | null;
+}
+
+interface PaymentSummary {
+  totalUnpaid: number;
+  entries: PaymentEntry[];
+}
+
+
 
 const AdminDashboardPage = () => {
   const dispatch = useDispatch<AppDispatch>();
 
-  // Access accountInfo and loading state from Redux
   const { loading: accountLoading, accountInfo } = useSelector(
     (state: RootState) => state.fetchAccountInfo
   );
 
-  // Access outstanding payments state from Redux
   const { data: outstandingPayments, loading: paymentsLoading } = useSelector(
     (state: RootState) => state.getOutstandingPayments
   );
-  console.log(outstandingPayments)
-  // Fetch accountInfo and outstanding payments data on component mount
+
   useEffect(() => {
     dispatch(fetchAccountInfo()).then((action) => {
       if (fetchAccountInfo.fulfilled.match(action)) {
-        const membershipId = action.payload.data?.id;
-        const { grade, id } = action.payload.data?.member || {};
-        storeEncryptedMember({ grade, id });
+        const membershipId = action.payload?.data?.id;
+        const memberData = action.payload?.data?.member;
+        
+        if (memberData?.grade && memberData?.id) {
+          storeEncryptedMember({ grade: memberData.grade, id: memberData.id });
+        }
 
         if (membershipId) {
           dispatch(getOutstandingPayments(membershipId));
@@ -40,34 +69,32 @@ const AdminDashboardPage = () => {
     });
   }, [dispatch]);
 
-  return (
-    <div className="p-6 m-2 md:m-6">
-      {/* accountInfo Profile Section */}
-      <div className="bg-white p-6 flex items-center rounded-lg shadow-md">
-        {/* Profile Picture */}
-        <div className="w-16 h-16">
-          <Image
-            src="/img.png" // Replace with the path to your image
-            alt="Profile Picture"
-            className="rounded-full"
-            width={64}
-            height={64}
-          />
-        </div>
+  const member = accountInfo?.member;
+  const payments = outstandingPayments as PaymentSummary | null;
 
-        {/* accountInfo Info */}
-        <div className="text-secondary ml-2">
+  return (
+    <div className="p-4 md:p-6 m-2 md:m-6">
+      {/* Profile */}
+      <div className="bg-white p-6 flex items-center rounded-lg shadow-md">
+        <Image
+          src="/img.png"
+          alt="Profile"
+          width={64}
+          height={64}
+          className="rounded-full"
+        />
+
+        <div className="ml-3">
           {accountLoading ? (
             <>
-              <Skeleton width={120} height={20} />
-              <Skeleton width={80} height={15} className="mt-1" />
+              <Skeleton width={120} height={18} />
+              <Skeleton width={80} height={14} className="mt-1" />
             </>
           ) : (
             <>
-              <h1 className="text-lg font-semibold">
-                {`${accountInfo?.member?.first_name || "N/A"} `}
+              <h1 className="font-semibold text-lg">
+                {member?.first_name || "N/A"}
               </h1>
-
               <p className="text-sm text-gray-500">
                 ID: {accountInfo?.id || "N/A"}
               </p>
@@ -76,99 +103,115 @@ const AdminDashboardPage = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
-        {/* Box for Membership Grade */}
+      {/* Summary Boxes */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
         <Box
-          imageSrc="/Frame1.png" // Path to the image
-          title="Grade" // Title of the box
-          description={
-            accountLoading ? "" : accountInfo?.member?.grade || "N/A"
-          } // Description
-          loading={accountLoading} // Pass the loading state
+          imageSrc="/Frame1.png"
+          title="Grade"
+          description={accountLoading ? "" : member?.grade || "N/A"}
+          loading={accountLoading}
         />
 
-        {/* Box for Membership Chapter */}
         <Box
-          imageSrc="/Frame2.png" // Path to the image
-          title="Chapter" // Title of the box
+          imageSrc="/Frame2.png"
+          title="Chapter"
           description={
-            accountLoading ? "" : accountInfo?.member?.chapter.state || "N/A"
-          } // Description
-          loading={accountLoading} // Pass the loading state
+            accountLoading ? "" : member?.chapter?.state || "N/A"
+          }
+          loading={accountLoading}
         />
 
-        {/* Box for Outstanding Fees */}
         <Box
-          imageSrc="/Frame3.png" // Path to the image
-          title="Outstanding Fees" // Title of the box
+          imageSrc="/Frame3.png"
+          title="Outstanding Fees"
           description={
             accountLoading || paymentsLoading
               ? "Outstanding Fees"
-              : outstandingPayments?.totalUnpaid
-              ? `₦${new Intl.NumberFormat().format(
-                  outstandingPayments.totalUnpaid
-                )}`
-              : "₦0"
+              : formatAmount(payments?.totalUnpaid || 0)
           }
-          loading={accountLoading || paymentsLoading} // Pass the loading state
+          loading={accountLoading || paymentsLoading}
         />
       </div>
 
-      {/* Outstanding Payments Section */}
-      <div className="overflow-x-auto mt-6 bg-white">
-        <h1 className="p-4 font-medium text-lg text-secondary">
-          Outstanding Payment
-        </h1>
+      {/* Payments Table */}
+      <div className="mt-8 bg-white rounded-lg shadow-sm overflow-x-auto">
+        <h1 className="p-4 font-medium text-lg">Outstanding Payments</h1>
+
         {paymentsLoading || accountLoading ? (
-          <TableSkeleton rows={4} cols={5} /> // Use TableSkeleton while loading
+          <TableSkeleton rows={4} cols={5} />
         ) : (
-          <table className="w-full table-auto border-collapse">
-            <thead>
-              <tr className="text-left">
+          <table className="w-full table-auto">
+            <thead className="bg-gray-50">
+              <tr>
                 <th className="p-4"></th>
-                <th className="p-4 whitespace-nowrap text-sm font-medium text-gray-500">
-                  Date
-                </th>
-                <th className="p-4 whitespace-nowrap text-sm font-medium text-gray-500">
-                  Description
-                </th>
-                <th className="p-4 whitespace-nowrap text-sm font-medium text-gray-500">
-                  Amount
-                </th>
-                <th className="p-4 whitespace-nowrap text-sm font-medium text-gray-500"></th>
+                <th className="p-4 text-sm text-gray-500">Date</th>
+                <th className="p-4 text-sm text-gray-500">Description</th>
+                <th className="p-4 text-sm text-gray-500">Amount</th>
+                <th className="p-4"></th>
               </tr>
             </thead>
+
             <tbody>
-              {outstandingPayments?.entries?.map((payment) => (
-                <tr key={payment.id} className="border-b">
-                  <td className="p-4 whitespace-nowrap">
-                    <input
-                      type="checkbox"
-                      className="form-checkbox h-5 w-5 text-primary"
-                    />
-                  </td>
-                  <td className="p-4 whitespace-nowrap text-sm text-gray-500">
-                    {new Date(payment.date).toLocaleDateString("en-GB")}
-                  </td>
-                  <td className="p-4 whitespace-nowrap font-medium">
-                    {payment.description || "N/A"}
-                  </td>
-                  <td className="p-4 whitespace-nowrap text-red-500">
-                    ₦{payment.amount.toLocaleString()}
-                  </td>
-                  <td className="p-4 whitespace-nowrap">
-                    <a
-                      href={`/payment-gateway?description=${encodeURIComponent(
-                        payment.description
-                      )}&amount=${payment.amount}`}
-                    >
-                      <button className="bg-primary text-white px-4 py-2 hover:bg-blue-800 transition">
-                        Proceed to Payment
-                      </button>
-                    </a>
+              {payments?.entries && payments.entries.length > 0 ? (
+                payments.entries.map((payment: PaymentEntry) => {
+                  const isPaid = payment.paid;
+
+                  return (
+                    <tr key={payment.id} className="border-t">
+                      <td className="p-4">
+                        <input
+                          type="checkbox"
+                          disabled={isPaid}
+                          className="h-5 w-5 cursor-pointer"
+                          aria-label={`Select payment ${payment.id}`}
+                        />
+                      </td>
+
+                      <td className="p-4 text-sm text-gray-600">
+                        {isPaid
+                          ? formatDate(payment.paidAt)
+                          : formatDate(payment.createdAt)}
+                      </td>
+
+                      <td className="p-4 font-medium">
+                        {payment.description}
+                      </td>
+
+                      <td
+                        className={`p-4 font-semibold ${
+                          isPaid ? "text-green-600" : "text-red-500"
+                        }`}
+                      >
+                        {formatAmount(payment.amount)}
+                      </td>
+
+                      <td className="p-4">
+                        {!isPaid ? (
+                          <a
+                            href={`/payment-gateway?description=${encodeURIComponent(
+                              payment.description
+                            )}&amount=${payment.amount}`}
+                          >
+                            <button className="bg-primary text-white px-4 py-2 rounded hover:bg-blue-800 transition">
+                              Proceed to Payment
+                            </button>
+                          </a>
+                        ) : (
+                          <span className="text-green-600 text-sm font-medium">
+                            Paid
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td colSpan={5} className="p-4 text-center text-gray-500">
+                    No outstanding payments
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         )}

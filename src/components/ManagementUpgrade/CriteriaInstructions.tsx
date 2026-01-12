@@ -45,16 +45,16 @@ export default function CriteriaInstructions() {
             key={index}
             className="border border-[#010056] rounded-md p-6 shadow-lg bg-blue-50 max-w-4xl mx-auto"
           >
-            <h3 className="text-xl font-semibold text-blue-800 mb-4">
+            <h3 className="text-xl font-semibold text-primary mb-4">
               {item.title}
             </h3>
-            <ul className="list-disc pl-6 space-y-2 text-gray-700">
+            <ul className="list-disc pl-6 space-y-2 text-primary">
               {item.points.map((point, i) => (
                 <li key={i}>{point}</li>
               ))}
             </ul>
             <p className="mt-4 font-bold text-gray-900">
-              Upgrade Fee: <span className="text-blue-600">{item.fee}</span>
+              Upgrade Fee: <span className="text-primary">{item.fee}</span>
             </p>
           </div>
         ))}

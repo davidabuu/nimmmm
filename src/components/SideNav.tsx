@@ -70,7 +70,7 @@ const SideNav: React.FC = () => {
           />
         </div>
 
-        {/* Logo */}
+       <Link href="/">
         <div className="flex justify-center items-center px-4">
           <Image
             src="/nnpc.png"
@@ -79,6 +79,7 @@ const SideNav: React.FC = () => {
             height={100}
           />
         </div>
+        </Link>
 
         {/* Side Navigation Links */}
         <div className="flex-1 text-secondary mt-10">

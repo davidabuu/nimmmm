@@ -26,7 +26,7 @@ const EligibilityCheck = () => {
     <div>
       {/* Button to check eligibility */}
       <button
-        className="bg-blue-500 text-white px-4 py-2 rounded-md flex items-center"
+        className="bg-primary text-white px-4 py-2 flex items-center"
         onClick={handleCheckEligibility}
         disabled={loading || !memberId}
       >
