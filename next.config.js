@@ -7,6 +7,16 @@ const nextConfig = {
         hostname: "nim.ng",
         pathname: "/**",
       },
+      {
+        protocol: "http",
+        hostname: "res.cloudinary.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+        pathname: "/**",
+      },
     ],
   },
 };

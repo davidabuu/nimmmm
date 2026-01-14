@@ -243,7 +243,9 @@ export default function UpgradeForm({
                 handleInputChange("profession", e.target.value)
               }
               placeholder="Enter Profession"
-              className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-primary/20"
+              className={`w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-primary/20 ${
+                errors.profession ? "border-red-500" : "border-gray-300"
+              }`}
             />
           </div>
         </div>

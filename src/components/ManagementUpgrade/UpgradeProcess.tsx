@@ -5,19 +5,23 @@ import {
   FaCheckCircle,
   FaCreditCard,
 } from "react-icons/fa";
+import { FaFile } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import { FaFile } from "react-icons/fa6";
+
 import { AppDispatch, RootState } from "@/src/lib/store";
 import { getDecryptedMember } from "@/src/service/utils";
 import { getGradeName } from "@/src/redux/nimUpgrade/getGrade";
+import {
+  MembershipForm,
+  submitMembershipForm,
+} from "@/src/redux/nimUpgrade/membershipSlice";
 
 import CriteriaInstructions from "./CriteriaInstructions";
 import UpgradeForm from "./UpgradeForm";
 import AdditionalInformation from "./AdditionalInformation";
 import Confirmation from "./Confirmation";
-import { MembershipForm, submitMembershipForm } from "@/src/redux/nimUpgrade/membershipSlice";
 
 const steps = [
   { id: 1, label: "Criteria/Instructions", icon: FaFileAlt },
@@ -29,11 +33,16 @@ const steps = [
 
 export default function UpgradeProcess() {
   const dispatch = useDispatch<AppDispatch>();
+
   const [activeStep, setActiveStep] = useState(1);
   const [loading, setLoading] = useState(true);
 
-  // Form state management
-  const [upgradeFormData, setUpgradeFormData] = useState<Partial<MembershipForm>>({
+  /** ===========================
+   * FORM STATE
+   ============================ */
+  const [upgradeFormData, setUpgradeFormData] = useState<
+    Partial<MembershipForm>
+  >({
     institutions: [],
     work_experience: [],
   });
@@ -44,17 +53,24 @@ export default function UpgradeProcess() {
     prevWorkExp: [{ organization: "", address: "", position: "", year: "" }],
   });
 
-  // Form validation state
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
+  /** ===========================
+   * REDUX STATE
+   ============================ */
   const { data: gradeData, loading: gradeLoading } = useSelector(
     (state: RootState) => state.getGradeName
   );
 
-  const { loading: submitLoading, error: submitError, success } = useSelector(
-    (state: RootState) => state.setMembershipForm
-  );
+  const {
+    loading: submitLoading,
+    error: submitError,
+    success,
+  } = useSelector((state: RootState) => state.setMembershipForm);
 
+  /** ===========================
+   * EFFECTS
+   ============================ */
   useEffect(() => {
     const member = getDecryptedMember();
     if (member) {
@@ -63,78 +79,79 @@ export default function UpgradeProcess() {
     setTimeout(() => setLoading(false), 1000);
   }, [dispatch]);
 
-  // Validate upgrade form
+  // 👉 MOVE TO CONFIRMATION AFTER SUCCESSFUL SUBMIT
+  useEffect(() => {
+    if (success) {
+      setActiveStep(4);
+    }
+  }, [success]);
+
+  /** ===========================
+   * VALIDATIONS
+   ============================ */
   const validateUpgradeForm = (): boolean => {
     const errors: Record<string, string> = {};
 
-    if (!upgradeFormData.membership_number) {
+    if (!upgradeFormData.membership_number)
       errors.membership_number = "Membership number is required";
-    }
-    if (!upgradeFormData.current_grade) {
+
+    if (!upgradeFormData.current_grade)
       errors.current_grade = "Current grade is required";
-    }
-    if (!upgradeFormData.expected_new_grade) {
+
+    if (!upgradeFormData.expected_new_grade)
       errors.expected_new_grade = "Expected new grade is required";
-    }
-    if (!upgradeFormData.surname) {
+
+    if (!upgradeFormData.surname)
       errors.surname = "Surname is required";
-    }
-    if (!upgradeFormData.othernames) {
+
+    if (!upgradeFormData.othernames)
       errors.othernames = "Other names are required";
-    }
-    if (!upgradeFormData.email) {
+
+    if (!upgradeFormData.email)
       errors.email = "Email is required";
-    }
-    if (!upgradeFormData.mobile_phone) {
+
+    if (!upgradeFormData.profession)
+      errors.profession = "Profession is required";
+
+    if (!upgradeFormData.mobile_phone)
       errors.mobile_phone = "Mobile phone is required";
-    }
 
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
 
-  // Validate additional info
   const validateAdditionalInfo = (): boolean => {
     const errors: Record<string, string> = {};
 
-    if (!additionalInfoData.institutions[0]?.name) {
+    if (!additionalInfoData.institutions[0]?.name)
       errors.institutions = "At least one institution is required";
-    }
-    if (!additionalInfoData.workExp[0]?.organization) {
+
+    if (!additionalInfoData.workExp[0]?.organization)
       errors.workExp = "Current work experience is required";
-    }
 
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
 
-  // Handle next button
-  const handleNext = async () => {
-    if (activeStep === 2) {
-      if (!validateUpgradeForm()) {
-        return;
-      }
-    }
-    if (activeStep === 3) {
-      if (!validateAdditionalInfo()) {
-        return;
-      }
-    }
+  /** ===========================
+   * NAVIGATION
+   ============================ */
+  const handleNext = () => {
+    if (activeStep === 2 && !validateUpgradeForm()) return;
+    if (activeStep === 3 && !validateAdditionalInfo()) return;
 
-    setActiveStep(activeStep + 1);
+    setActiveStep((prev) => prev + 1);
   };
 
-  // Handle save and submit
   const handleSaveAndSubmit = async () => {
-    // Combine all form data
     const completeFormData: MembershipForm = {
       ...upgradeFormData,
-      institutions: additionalInfoData.institutions.map(inst => ({
+      institutions: additionalInfoData.institutions.map((inst) => ({
         name: inst.name,
         qualification: inst.qualification,
         year: parseInt(inst.year) || new Date().getFullYear(),
       })),
-      work_experience: additionalInfoData.workExp.map(exp => ({
+      work_experience: additionalInfoData.workExp.map((exp) => ({
         name: exp.organization,
         position: exp.position,
         address: exp.address,
@@ -142,21 +159,25 @@ export default function UpgradeProcess() {
       })),
     } as MembershipForm;
 
-    // Dispatch submit action
     await dispatch(submitMembershipForm(completeFormData));
   };
 
-  // Check if next button should be disabled
   const isNextDisabled = (): boolean => {
-    if (activeStep === 2) {
+    if (activeStep === 2)
       return !upgradeFormData.membership_number || !upgradeFormData.email;
-    }
-    if (activeStep === 3) {
-      return !additionalInfoData.institutions[0]?.name || !additionalInfoData.workExp[0]?.organization;
-    }
+
+    if (activeStep === 3)
+      return (
+        !additionalInfoData.institutions[0]?.name ||
+        !additionalInfoData.workExp[0]?.organization
+      );
+
     return false;
   };
 
+  /** ===========================
+   * RENDER CONTENT
+   ============================ */
   const renderContent = () => {
     switch (activeStep) {
       case 1:
@@ -188,25 +209,21 @@ export default function UpgradeProcess() {
 
   return (
     <div className="p-4 bg-white min-h-screen">
-      {/* Stepper */}
-      <div className="flex flex-wrap md:flex-nowrap items-center bg-white p-4 rounded-md shadow-md whitespace-nowrap mb-6 overflow-x-auto">
-        <div className="flex w-full md:grid md:grid-cols-5 gap-2 md:gap-4">
+      {/* STEPPER */}
+      <div className="flex items-center bg-white p-4 rounded-md shadow mb-6 overflow-x-auto">
+        <div className="grid grid-cols-5 gap-4 w-full">
           {steps.map((step) => {
             const Icon = step.icon;
             return (
               <div
                 key={step.id}
-                className={`flex flex-col md:flex-row items-center justify-center space-x-0 md:space-x-2 cursor-pointer p-2 md:p-4 rounded-lg transition duration-300 ${
+                className={`flex flex-col items-center cursor-pointer p-3 rounded-lg ${
                   activeStep === step.id ? "bg-primary/10" : ""
                 }`}
-                onClick={() => {
-                  if (activeStep > step.id) {
-                    setActiveStep(step.id);
-                  }
-                }}
+                onClick={() => activeStep > step.id && setActiveStep(step.id)}
               >
                 <Icon
-                  className={`text-2xl md:text-xl ${
+                  className={`text-xl ${
                     activeStep === step.id
                       ? "text-primary"
                       : activeStep > step.id
@@ -214,15 +231,7 @@ export default function UpgradeProcess() {
                       : "text-gray-400"
                   }`}
                 />
-                <span
-                  className={`text-xs md:text-sm font-medium ${
-                    activeStep === step.id
-                      ? "text-primary"
-                      : activeStep > step.id
-                      ? "text-green-500"
-                      : "text-gray-400"
-                  }`}
-                >
+                <span className="text-xs font-medium mt-1">
                   {step.label}
                 </span>
               </div>
@@ -231,11 +240,11 @@ export default function UpgradeProcess() {
         </div>
       </div>
 
-      {/* Upgrade Information */}
+      {/* HEADER */}
       {activeStep === 1 && (
-        <div className="flex flex-col items-center my-4">
+        <div className="text-center my-4">
           {gradeLoading || loading ? (
-            <Skeleton width={200} height={30} />
+            <Skeleton width={250} height={30} />
           ) : (
             <h2 className="text-xl font-bold text-primary">
               Upgrade from: {gradeData?.name} → {gradeData?.nextGrade?.name}
@@ -244,61 +253,51 @@ export default function UpgradeProcess() {
         </div>
       )}
 
-      {/* Content */}
-      <div>{renderContent()}</div>
+      {/* MAIN CONTENT */}
+      {renderContent()}
 
-      {/* Error Message */}
+      {/* ERROR */}
       {submitError && (
-        <div className="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+        <div className="mt-4 p-4 bg-red-100 text-red-700 rounded">
           {submitError}
         </div>
       )}
 
-      {/* Success Message */}
-      {success && (
-        <div className="mt-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
-          Form submitted successfully!
-        </div>
-      )}
-
-      {/* Bottom Navigation */}
+      {/* NAVIGATION */}
       <div className="mt-8 flex justify-between">
-        {activeStep > 1 && (
+        {activeStep > 1 && activeStep < 4 && (
           <button
-            className="bg-gray-400 text-white px-6 py-2 rounded-md shadow hover:bg-gray-600 transition duration-300 disabled:opacity-50"
-            onClick={() => setActiveStep(activeStep - 1)}
+            className="bg-gray-400 text-white px-6 py-2 rounded"
+            onClick={() => setActiveStep((prev) => prev - 1)}
           >
             Previous
           </button>
         )}
 
-        <div className="flex gap-4 ml-auto">
+        <div className="ml-auto flex gap-4">
           {activeStep === 3 && (
             <button
-              className={`text-white px-6 py-2 rounded-md shadow transition duration-300 flex items-center gap-2 ${
+              onClick={handleSaveAndSubmit}
+              disabled={submitLoading || success}
+              className={`px-6 py-2 rounded text-white ${
                 submitLoading
-                  ? "bg-gray-400 cursor-not-allowed"
+                  ? "bg-gray-400"
                   : "bg-primary hover:opacity-90"
               }`}
-              onClick={handleSaveAndSubmit}
-              disabled={submitLoading}
             >
-              {submitLoading && (
-                <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
-              )}
               {submitLoading ? "Submitting..." : "Save & Submit"}
             </button>
           )}
 
           {activeStep < 4 && activeStep !== 3 && (
             <button
-              className={`text-white px-6 py-2 rounded-md shadow transition duration-300 ${
-                isNextDisabled()
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-primary hover:opacity-90"
-              }`}
               onClick={handleNext}
               disabled={isNextDisabled()}
+              className={`px-6 py-2 rounded text-white ${
+                isNextDisabled()
+                  ? "bg-gray-400"
+                  : "bg-primary hover:opacity-90"
+              }`}
             >
               Next
             </button>

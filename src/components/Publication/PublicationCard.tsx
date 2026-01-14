@@ -12,14 +12,14 @@ function PublicationCard({
   issn,
   title,
   description,
-  imageUrl,
+
 }: PublicationCardProps) {
   return (
     <div className="bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
       <div className="flex flex-col sm:flex-row gap-6 items-start">
         <div className="w-24 h-24 shrink-0">
           <Image
-            src={imageUrl}
+            src={'/nnpc.png'}
             alt={`${title} logo`}
             className="w-full h-full"
             width={50}

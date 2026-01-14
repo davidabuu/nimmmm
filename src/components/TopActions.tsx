@@ -27,7 +27,7 @@ const TopActions = () => {
 
   return (
     <header className="w-full pt-2">
-      <div className="mx-auto flex max-w-7xl justify-end">
+      <div className="mx-auto flex max-w-xl md:max-w-5xl justify-end">
         <div className="flex mb-2">
 
           {/* Search */}
